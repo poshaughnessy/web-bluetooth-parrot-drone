@@ -111,7 +111,25 @@
           startNotifications(service, NOTIFY_CHARACTERISTICS[key]);
         });
 
-        // TODO: 'fd22', 'fd23', 'fd24', 'fd52', 'fd53', 'fd54'
+      })
+      .then(() => {return gattServer.getPrimaryService( SERVICES.fd21 )})
+      .then(service => {
+
+        console.log('Service', service);
+
+        ['fd22', 'fd23', 'fd24'].forEach((key) => {
+          startNotifications(service, READ_WRITE_NOTIFY_CHARACTERISTICS_1[key]);
+        });
+
+      })
+      .then(() => {return gattServer.getPrimaryService( SERVICES.fd51 )})
+      .then(service => {
+
+        console.log('Service', service);
+
+        ['fd52', 'fd53', 'fd54'].forEach((key) => {
+          startNotifications(service, READ_WRITE_NOTIFY_CHARACTERISTICS_2[key]);
+        });
 
       });
 
