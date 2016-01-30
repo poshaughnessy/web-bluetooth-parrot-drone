@@ -59,7 +59,7 @@
     console.log('Start notifications', characteristicUUID);
 
     service.getCharacteristic(characteristicUUID)
-      .then((characteristic) => {
+      .then(characteristic => {
 
         characteristic.startNotifications().then(() => {
           characteristic.addEventListener('characteristicvaluechanged', event => {
@@ -68,7 +68,8 @@
           });
         });
 
-      });
+      })
+      .catch(error => { console.error('startNotifications error', error)});
 
   }
 
