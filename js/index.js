@@ -140,19 +140,25 @@
 
     console.log('Handshake...');
 
-    return gattServer.getPrimaryService( SERVICES.fa00 )
-      .then(service => { return service.getCharacteristic( WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b ) })
-      .then(characteristic => {
+    return new Promise(function(resolve) {
+      setTimeout(function () {
+        return gattServer.getPrimaryService(SERVICES.fa00)
+          .then(service => {
+            return service.getCharacteristic(WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b)
+          })
+          .then(characteristic => {
 
-        console.log('Characteristic', characteristic);
+            console.log('Characteristic', characteristic);
 
-        const handshakeCmd = new Uint8Array([0x04, 0x01, 0x00, 0x04, 0x01, 0x00, 0x32, 0x30, 0x31, 0x34, 0x2D, 0x31, 0x30, 0x2D, 0x32, 0x38, 0x00]);
+            const handshakeCmd = new Uint8Array([0x04, 0x01, 0x00, 0x04, 0x01, 0x00, 0x32, 0x30, 0x31, 0x34, 0x2D, 0x31, 0x30, 0x2D, 0x32, 0x38, 0x00]);
 
-        console.log('Writing handshake command');
+            console.log('Writing handshake command');
 
-        return characteristic.writeValue(handshakeCmd);
+            resolve(characteristic.writeValue(handshakeCmd));
 
-      });
+          });
+      }, 100);
+    });
 
   }
 
@@ -188,14 +194,5 @@
   goButton.addEventListener('click', () => {
     initialiseAndTakeOff();
   });
-
-  /*
-  return new Promise(function(resolve) {
-    console.log('Waiting...');
-    setTimeout(function () {
-      resolve();
-    }, 30000);
-  });
-  */
 
 })();
