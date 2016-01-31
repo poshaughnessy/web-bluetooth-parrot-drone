@@ -23,14 +23,11 @@ for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.
 ## Then...
 
 * Ensure the drone is switched on and the lights are green.
-* Press the 'Go' button
-* Select your drone name to pair with
+* Press the 'Connect' button
+* Select your drone name to pair with (see screenshot below)
+* Now you're in control! Try Take Off and Land.
 
 ![Pair screen](docs/images/pair-screen.png?raw=true "Pair screen")
-
-## Now you're in control!
-
-* Try Connect first, then Take Off and Land.
 
 ## Video
 
