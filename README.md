@@ -41,6 +41,6 @@ up towards the drone from underneath. When it detects it has been touched, the d
 * Now you're in control! Try Take Off and Land. Flips coming soon!  
  
 
-## Video
+## Demo Video
 
-Coming soon...
+[https://youtu.be/QLLobQP0tkw](https://youtu.be/QLLobQP0tkw)
