@@ -20,6 +20,7 @@ let App = function() {
     flipButton = document.getElementById('flipBtn'),
     landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
+    connected = false,
     droneDevice = null,
     gattServer = null,
     // Used to store the 'counter' that's sent to each characteristic
@@ -58,17 +59,17 @@ let App = function() {
   function discover() {
     console.log('Searching for drone...');
     return navigator.bluetooth.requestDevice({
-      filters: [{
-        namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
-      }]
-    });
+        filters: [{
+          namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
+        }]
+      })
+      .then((device) => {
+        console.log('Discovered drone', device);
+        droneDevice = device;
+      });
   }
 
-  function connect(device) {
-
-    console.log('Discovered drone', device);
-
-    droneDevice = device;
+  function connectGATT() {
 
     return droneDevice.connectGATT()
       .then(server => {
@@ -77,9 +78,22 @@ let App = function() {
 
   }
 
+  // Disconnect does not appear to be implemented in Chrome for Android yet
+  /*
+  function disconnectGATT() {
+
+    return gattServer.disconnect()
+      .then(() => {
+        droneDevice = null;
+        gattServer = null;
+      })
+
+  }
+  */
+
   function _getCharacteristic(serviceID, characteristicID) {
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
 
       const char = characteristics[characteristicID];
 
@@ -110,7 +124,7 @@ let App = function() {
 
   function _getService(serviceID) {
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
 
       const service = services[serviceID];
 
@@ -164,21 +178,38 @@ let App = function() {
   }
 
 
-  function initialiseConnection() {
+  function connect() {
 
     console.log('Connect');
 
     return discover()
-      .then(device => { return connect(device) })
+      .then(() => { return connectGATT() })
+      .then(() => { return wait(500) })
       .then(() => { return registerNotifications() })
-      .then(() => { return wait(1000) })
+      .then(() => { return wait(500) })
       .then(() => {
-        console.log('Connected')
+        connected = true;
         connectButton.innerHTML = 'CONNECTED';
-        connectButton.disabled = true;
+        console.log('Connected');
       });
 
   }
+
+  // Disconnect does not appear to be implemented in Chrome for Android yet
+  /*
+  function disconnect() {
+
+    console.log('Disconnect');
+
+    return disconnectGATT()
+      .then(() => {
+        connected = false;
+        connectButton.innerHTML = 'CONNECT';
+        console.log('Disconnected');
+      });
+
+  }
+  */
 
   function takeOff() {
 
@@ -209,7 +240,7 @@ let App = function() {
   }
 
   function wait(millis) {
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       setInterval(() => {
         resolve();
       }, millis);
@@ -217,7 +248,9 @@ let App = function() {
   }
 
   connectButton.addEventListener('click', () => {
-    initialiseConnection();
+    if (!connected) {
+      connect();
+    }
   });
 
   takeOffButton.addEventListener('click', () => {
@@ -240,17 +273,16 @@ let App = function() {
 
     console.log('Register notifications...');
 
-    ['fb0f', 'fb0e', 'fb1b', 'fb1c'].forEach((key) => {
-      startNotifications('fb00', key);
-    });
-
-    ['fd22', 'fd23', 'fd24'].forEach((key) => {
-      startNotifications('fd21', key);
-    });
-
-    ['fd52', 'fd53', 'fd54'].forEach((key) => {
-      startNotifications('fd51', key);
-    });
+    return startNotifications('fb00', 'fb0f')
+      .then(() => {startNotifications('fb00', 'fb0e')})
+      .then(() => {startNotifications('fb00', 'fb1b')})
+      .then(() => {startNotifications('fb00', 'fb1c')})
+      .then(() => {startNotifications('fd21', 'fd22')})
+      .then(() => {startNotifications('fd21', 'fd23')})
+      .then(() => {startNotifications('fd21', 'fd24')})
+      .then(() => {startNotifications('fd51', 'fd52')})
+      .then(() => {startNotifications('fd51', 'fd53')})
+      .then(() => {startNotifications('fd51', 'fd54')})
 
   }
 
