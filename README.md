@@ -29,6 +29,8 @@ for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.
 
 ![Pair screen](docs/images/pair-screen.png?raw=true "Pair screen")
 
+![App screenshot](docs/images/app.png?raw=true "App screenshot")
+
 ## Video
 
 Coming soon...
