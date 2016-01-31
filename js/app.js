@@ -165,8 +165,8 @@ let App = function() {
       .then(() => { return wait(1000) })
       .then(() => {
         console.log('Connected')
-        connectButton.innerHTML = 'Connected';
-        connectButton.disable = true;
+        connectButton.innerHTML = 'CONNECTED';
+        connectButton.disabled = true;
       });
 
   }
