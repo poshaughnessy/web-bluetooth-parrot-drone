@@ -2,57 +2,15 @@
 
 (function() {
 
-  /*
-  const SERVICES = {
-    'fa00': getUUID('fa00'),
-    'fb00': getUUID('fb00'),
-    'fc00': getUUID('fc00'),
-    'fd21': getUUID('fd21'),
-    'fd51': getUUID('fd51'),
-    'fe00': getUUID('fe00')
-  };
-
-  // There are 32 'Write Without Response' characteristics in the fa00 service! But only using a couple of them.
-  const WRITE_WITHOUT_RESPONSE_CHARACTERISTICS = {
-    'fa0a': getUUID('fa0a'),
-    'fa0b': getUUID('fa0b')
-  };
-  
-  // There are 32 'Notify' characteristics in the fb00 service! But only using four of them.
-  const NOTIFY_CHARACTERISTICS = {
-    'fb0f': getUUID('fb0f'),
-    'fb0e': getUUID('fb0e'),
-    'fb1b': getUUID('fb1b'),
-    'fb1c': getUUID('fb1c')
-  };
-
-  // There is 1 'Write' characteristic in the fc00 service. Not currently used.
-  const WRITE_CHARACTERISTIC = {
-    'ffc1': getUUID('ffc1')
-  }
-
-  // There are 3 'Read Write Notify' characteristics in the fd21 service.
-  const READ_WRITE_NOTIFY_CHARACTERISTICS_1 = {
-    'fd22': getUUID('fd22'),
-    'fd23': getUUID('fd23'),
-    'fd24': getUUID('fd24')
-  };
-
-  // There are 3 'Read Write Notify' characteristics in the fd51 service
-  const READ_WRITE_NOTIFY_CHARACTERISTICS_2 = {
-    'fd52': getUUID('fd52'),
-    'fd53': getUUID('fd53'),
-    'fd54': getUUID('fd54')
-  };
-
-  // There are 2 more characteristics in the fe00 service. Not currently used.
-  const MISC_CHARACTERISTICS = {
-    'fe01': getUUID('fe01'),
-    'fe02': getUUID('fe02')
-  };
-  */
-
-  //const Buffer = window.buffer.Buffer;
+  /**
+   * Services:
+   *  - fa00 - contains 'write without response' characteristics starting with fa...
+   *  - fb00 - contains 'notify' characteristics starting with fb...
+   *  - fc00 - contains 'write' characteristic ffc1, not currently used
+   *  - fd21 - contains 'read write notify' characteristics fd22, fd23, fd24
+   *  - fd51 - contains 'read write notify' characteristics fd52, fd53, fd54
+   *  - fe00 - contains characteristics fe01, fe02, not currently used
+   */
 
   let goButton = document.getElementById('goBtn'),
     stopButton = document.getElementById('stopBtn'),
@@ -67,16 +25,6 @@
     },
     services = {},
     characteristics = {};
-    /*
-    ping = null,
-    driveStepsRemaining = 0,
-    speeds = {
-      yaw: 0, // turn
-      pitch: 0, // forward/backward
-      roll: 0, // left/right
-      altitude: 0 // up/down
-    },
-    */
 
 
   function getUUID(uniqueSegment) {
@@ -275,105 +223,5 @@
     });
 
   }
-
-  /*
-  function handshake() {
-
-    console.log('Handshake...');
-
-    return new Promise(function(resolve) {
-      setTimeout(function () {
-        return gattServer.getPrimaryService(SERVICES.fa00)
-          .then(service => {
-            return service.getCharacteristic(WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b)
-          })
-          .then(characteristic => {
-
-            console.log('Characteristic', characteristic);
-
-            const handshakeCmd = new Uint8Array([0x04, ++steps.fa0b, 0x00, 0x04, 0x01, 0x00, 0x32, 0x30, 0x31, 0x34, 0x2D, 0x31, 0x30, 0x2D, 0x32, 0x38, 0x00]);
-
-            console.log('Writing handshake command');
-
-            resolve(characteristic.writeValue(handshakeCmd));
-
-          });
-      }, 100);
-    });
-
-  }
-
-  function startPing() {
-
-    return new Promise(function(resolve) {
-
-      ping = setInterval(() => {
-        var buffer = new Buffer(19);
-        buffer.fill(0);
-        buffer.writeInt16LE(2, 0);
-        buffer.writeInt16LE(++steps.fa0a, 1);
-        buffer.writeInt16LE(2, 2);
-        buffer.writeInt16LE(0, 3);
-        buffer.writeInt16LE(2, 4);
-        buffer.writeInt16LE(0, 5);
-        buffer.writeInt16LE((driveStepsRemaining ? 1 : 0), 6);
-
-        buffer.writeInt16LE(speeds.roll, 7);
-        buffer.writeInt16LE(speeds.pitch, 8);
-        buffer.writeInt16LE(speeds.yaw, 9);
-        buffer.writeInt16LE(speeds.altitude, 10);
-        buffer.writeFloatLE(0, 11);
-
-        return gattServer.getPrimaryService(SERVICES.fa00)
-          .then(service => {
-            return service.getCharacteristic(WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0a)
-          })
-          .then(characteristic => {
-            console.log('Ping write');
-            characteristic.writeValue(buffer);
-          });
-
-        if (driveStepsRemaining < 0) {
-          // go on the last command blindly
-        } else if (driveStepsRemaining > 1) {
-          // decrement the drive chain
-          driveStepsRemaining--;
-        } else {
-          // reset to hover states
-          hover();
-        }
-
-      }, 50);
-
-      setInterval(() => {
-        resolve();
-      }, 100);
-
-    });
-
-  }
-
-  function calibrate() {
-
-    return gattServer.getPrimaryService(SERVICES.fa00)
-      .then(service => {
-        return service.getCharacteristic(WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b)
-      })
-      .then(characteristic => {
-        characteristic.writeValue(new Uint8Array([0x02, ++steps.fa0b & 0xFF, 0x02, 0x00, 0x00, 0x00]));
-      });
-
-  }
-
-  function hover() {
-
-    driveStepsRemaining = 0;
-    speeds.roll = 0;
-    speeds.pitch = 0;
-    speeds.yaw = 0;
-    speeds.altitude = 0;
-
-  }
-  */
 
 })();
