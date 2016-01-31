@@ -20,6 +20,12 @@ If you have trouble debugging in the standard Chrome version, try Chrome Canary 
 It's currently configured for a "Travis" (Airborne Cargo) drone, but you can switch the type of mini drone to look
 for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.   
 
+## Safety warning
+
+This code isn't bullet proof. Please observe the usual caution as well as making sure you have a backup method of 
+disabling the drone in the event of a bug (a technique I have used is to raise something like a strong piece of card
+up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
+
 ## Then...
 
 * Ensure the drone is switched on and the lights are green.
@@ -32,8 +38,8 @@ for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.
 
 ![Pair screen](docs/images/pair-screen.png?raw=true "Pair screen")
 
-* Now you're in control! Try Take Off and Land.
-
+* Now you're in control! Try Take Off and Land. Flips coming soon!  
+ 
 
 ## Video
 
