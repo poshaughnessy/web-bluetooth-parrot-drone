@@ -6,12 +6,12 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
  
 ## Setup
 
-Requires Chrome for Android Dev edition.
+Currently requires Chrome for Android Dev edition, with the [Web Bluetooth flag enabled](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web#before-we-start).
 
-Run up on your dev machine with: `python -m SimpleHTTPServer 8080`
+Run the web app up on your dev machine with: `python -m SimpleHTTPServer 8080`
 
 Go to [chrome://inspect/#devices](chrome://inspect/#devices) and enable port forwarding for port 8080.
-Now you should be able to visit `localhost:8080` on your device, to see the dashboard. 
+Now you should be able to visit `localhost:8080` on your Android device, to see the dashboard. 
 
 NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, if not serving from `localhost`. 
 
