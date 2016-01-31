@@ -1,0 +1,26 @@
+body {
+  font-family: 'Helvetica Neue', Helvetica, arial, sans-serif;
+  background: #0ea2dc;
+  color: #fff;
+}
+
+#headline {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+button {
+  display: block;
+  width: 300px;
+  height: 50px;
+  margin: 20px auto;
+  background: #0b81b0;
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  font-size: 1.2em;
+  font-weight: bold;
+  font-style: italic;
+}
+

@@ -19,7 +19,6 @@ let App = function() {
     takeOffButton = document.getElementById('takeOffBtn'),
     landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
-    stateEl = document.getElementById('state'),
     droneDevice = null,
     gattServer = null,
     // Used to store the 'counter' that's sent to each characteristic
@@ -166,7 +165,8 @@ let App = function() {
       .then(() => { return wait(1000) })
       .then(() => {
         console.log('Connected')
-        stateEl.innerHTML = 'Connected';
+        connectButton.innerHTML = 'Connected';
+        connectButton.disable = true;
       });
 
   }

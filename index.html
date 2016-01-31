@@ -4,29 +4,16 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Web Bluetooth Drone Demo</title>
-    <style>
-      button {
-        display: block;
-        font-size: 1.2em;
-        width: 300px;
-        height: 50px;
-        margin: 20px auto;
-      }
-      #state {
-        width: 300px;
-        margin: 20px auto;
-        text-align: center;
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css"/>
   </head>
   <body>
 
-    <button id="connectBtn">Connect</button>
-    <button id="takeOffBtn">Take off</button>
-    <button id="landBtn">Land</button>
-    <button id="emergencyBtn">Emergency cut off</button>
+    <img id="headline" src="images/drone-controller.png" alt="Drone Controller"/>
 
-    <p id="state">Not connected</p>
+    <button id="connectBtn">CONNECT</button>
+    <button id="takeOffBtn">TAKE OFF</button>
+    <button id="landBtn">LAND</button>
+    <button id="emergencyBtn">EMERGENCY LAND</button>
 
     <script src="js/app.js"></script>
   </body>
