@@ -4,10 +4,20 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Web Bluetooth Drone Demo</title>
+    <style>
+      button {
+        display: block;
+        font-size: 1.2em;
+        width: 300px;
+        height: 50px;
+        margin-bottom: 30px;
+      }
+    </style>
   </head>
   <body>
-    <button id="goButton">Go!</button>
-    <!--<script src="js/vendor/buffer.js"></script>-->
-    <script src="js/index.js"></script>
+    <button id="goBtn">Go!</button>
+    <button id="stopBtn">Stop!</button>
+    <button id="emergencyBtn">Emergency cut off!</button>
+    <script src="js/app.js"></script>
   </body>
 </html>

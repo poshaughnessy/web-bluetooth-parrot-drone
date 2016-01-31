@@ -2,6 +2,7 @@
 
 (function() {
 
+  /*
   const SERVICES = {
     'fa00': formatUUID('fa00'),
     'fb00': formatUUID('fb00'),
@@ -49,27 +50,31 @@
     'fe01': formatUUID('fe01'),
     'fe02': formatUUID('fe02')
   };
+  */
 
   //const Buffer = window.buffer.Buffer;
 
-  let goButton = document.getElementById('goButton'),
+  let goButton = document.getElementById('goBtn'),
+    stopButton = document.getElementById('stopBtn'),
     droneDevice = null,
     gattServer = null,
-    ping = null,
-    driveStepsRemaining = 0,
     // Used to store the 'counter' that's sent to each characteristic
     steps = {
       'fa0a': 1,
       'fa0b': 1,
       'fa0c': 1
     },
+    characteristics = {};
+    /*
+    ping = null,
+    driveStepsRemaining = 0,
     speeds = {
       yaw: 0, // turn
       pitch: 0, // forward/backward
       roll: 0, // left/right
       altitude: 0 // up/down
-    };
-
+    },
+    */
 
 
   function formatUUID(uniqueSegment) {
@@ -114,6 +119,98 @@
 
   }
 
+  function _writeCommand(characteristic, commandArray) {
+
+    var command = new Uint8Array(array);
+
+    return characteristic.writeValue(command).then(() => {
+      console.log('Written command');
+    });
+
+  }
+
+  function writeTo(serviceID, characteristicID, commandArray) {
+
+    const char = characteristics[characteristicID];
+
+    if (char) {
+
+      return _writeCommand(char, commandArray);
+
+    } else {
+
+      // XXX Better to grab all at once? But currently no 'getCharacteristics' (plural) implemented in Chrome for Android?
+      return gattServer.getPrimaryService( formatUUID(serviceID) )
+        .then(service => { return service.getCharacteristic( formatUUID(characteristicID) ) })
+        .then(characteristic => {
+
+          characteristics[characteristicID] = characteristic;
+
+          return _writeCommand(characteristic, commandArray);
+        });
+
+    }
+
+  }
+
+  function takeOff() {
+
+    console.log('Take off...');
+    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);
+
+  }
+
+  function wait(millis) {
+
+    return new Promise(function(resolve) {
+      setInterval(() => {
+        resolve();
+      }, millis);
+    });
+
+  }
+
+  function land() {
+
+    console.log('Land...');
+    writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
+
+  }
+
+  function emergencyCutOff() {
+
+    console.warn('Emergency cut off');
+    writeTo('fa00', 'fa0c', [0x02, steps.fa0c & 0xFF, 0x02, 0x00, 0x04, 0x00]);
+
+  }
+
+  function initialiseAndTakeOff() {
+
+    discover()
+      .then(device => { return connect(device) })
+      .then(server => { return registerNotifications(server) })
+      .then(() => { return wait(1000) })
+      .then(() => { return takeOff() })
+      .then(() => { return wait(3000) })
+      .then(() => { return land() })
+      .catch(error => { console.error('Error', error) });
+
+  }
+
+  goButton.addEventListener('click', () => {
+    initialiseAndTakeOff();
+  });
+
+
+  stopButton.addEventListener('click', () => {
+    land();
+  });
+
+  emergencyButton.addEventListener('click', () => {
+    emergencyCutOff();
+  });
+
+  /*
   function registerNotifications(server) {
 
     console.log('Register notifications...');
@@ -153,7 +250,6 @@
 
   }
 
-  /*
   function handshake() {
 
     console.log('Handshake...');
@@ -241,7 +337,6 @@
       });
 
   }
-  */
 
   function hover() {
 
@@ -252,81 +347,6 @@
     speeds.altitude = 0;
 
   }
-
-  function takeOff() {
-
-    console.log('Take off...');
-
-    return gattServer.getPrimaryService( SERVICES.fa00 )
-      .then(service => { return service.getCharacteristic( WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b ) })
-      .then(characteristic => {
-
-        console.log('Writing take off command');
-
-        var buffer = new ArrayBuffer(6);
-        var array = new Uint8Array(buffer);
-        array.set([4, steps.fa0b++, 2, 0, 1, 0]);
-        characteristic.writeValue(buffer).then(function onResolve(){
-          console.log('takeoff success');
-        }, function onReject(){
-          console.log('takeoff failed');
-        });
-
-      });
-
-  }
-
-  function wait(millis) {
-
-    return new Promise(function(resolve) {
-
-      setInterval(() => {
-        resolve();
-      }, millis);
-
-    });
-
-  }
-
-  function land() {
-
-    console.log('Land...');
-
-    return gattServer.getPrimaryService( SERVICES.fa00 )
-      .then(service => { return service.getCharacteristic( WRITE_WITHOUT_RESPONSE_CHARACTERISTICS.fa0b ) })
-      .then(characteristic => {
-
-        console.log('Writing land command');
-
-        // 4, (byte)mSettingsCounter, 2, 0, 3, 0
-        var buffer = new ArrayBuffer(6);
-        var array = new Uint8Array(buffer);
-        array.set([4, steps.fa0b++, 2, 0, 3, 0]);
-        characteristic.writeValue(buffer).then(function onResolve() {
-          console.log('landing success');
-        }, function onReject() {
-          console.log('landing failed');
-        });
-
-      });
-
-  }
-
-  function initialiseAndTakeOff() {
-
-    discover()
-      .then(device => { return connect(device) })
-      .then(server => { return registerNotifications(server) })
-      .then(() => { return wait(1000) })
-      .then(() => { return takeOff() })
-      .then(() => { return wait(5000) })
-      .then(() => { return land() })
-      .catch(error => { console.error('Error', error) });
-
-  }
-
-  goButton.addEventListener('click', () => {
-    initialiseAndTakeOff();
-  });
+  */
 
 })();
