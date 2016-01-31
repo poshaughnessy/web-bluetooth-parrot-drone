@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+let App = function() {
 
   /**
    * Services:
@@ -12,9 +12,11 @@
    *  - fe00 - contains characteristics fe01, fe02, not currently used
    */
 
-  let goButton = document.getElementById('goBtn'),
-    stopButton = document.getElementById('stopBtn'),
+  let connectButton = document.getElementById('connectBtn'),
+    takeOffButton = document.getElementById('takeOffBtn'),
+    landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
+    stateEl = document.getElementById('state'),
     droneDevice = null,
     gattServer = null,
     // Used to store the 'counter' that's sent to each characteristic
@@ -128,23 +130,40 @@
 
   function _writeCommand(characteristic, commandArray) {
 
-    //var command = new Uint8Array(commandArray);
-
     var buffer = new ArrayBuffer(commandArray.length);
     var command = new Uint8Array(buffer);
     command.set(commandArray);
 
-    return characteristic.writeValue(command).then(() => {
-      console.log('Written command');
-    });
+    console.log('Write command', command);
+
+    return characteristic.writeValue(command);
 
   }
 
   function writeTo(serviceID, characteristicID, commandArray) {
 
-    _getCharacteristic(serviceID, characteristicID)
+    return _getCharacteristic(serviceID, characteristicID)
       .then(characteristic => {
         return _writeCommand(characteristic, commandArray);
+      })
+      .then(() => {
+        console.log('Written command');
+      });
+
+  }
+
+
+  function initialiseConnection() {
+
+    console.log('Connect');
+    
+    return discover()
+      .then(device => { return connect(device) })
+      .then(() => { return registerNotifications() })
+      .then(() => { return wait(1000) })
+      .then(() => {
+        console.log('Connected')
+        stateEl.innerHTML = 'Connected';
       });
 
   }
@@ -156,49 +175,37 @@
 
   }
 
-  function wait(millis) {
-
-    return new Promise(function(resolve) {
-      setInterval(() => {
-        resolve();
-      }, millis);
-    });
-
-  }
-
   function land() {
 
     console.log('Land...');
-    writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
+    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
 
   }
 
   function emergencyCutOff() {
 
     console.warn('Emergency cut off');
-    writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
+    return writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
 
   }
 
-  function initialiseAndTakeOff() {
-
-    discover()
-      .then(device => { return connect(device) })
-      .then(() => { return registerNotifications() })
-      .then(() => { return wait(1000) })
-      .then(() => { return takeOff() })
-      .then(() => { return wait(5000) })
-      .then(() => { return land() })
-      .catch(error => { console.error('Error', error) });
-
+  function wait(millis) {
+    return new Promise(function(resolve) {
+      setInterval(() => {
+        resolve();
+      }, millis);
+    });
   }
 
-  goButton.addEventListener('click', () => {
-    initialiseAndTakeOff();
+  connectButton.addEventListener('click', () => {
+    initialiseConnection();
   });
 
+  takeOffButton.addEventListener('click', () => {
+    takeOff();
+  });
 
-  stopButton.addEventListener('click', () => {
+  landButton.addEventListener('click', () => {
     land();
   });
 
@@ -224,4 +231,6 @@
 
   }
 
-})();
+};
+
+App();
