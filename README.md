@@ -22,7 +22,8 @@ for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.
 
 ## Safety warning
 
-This code isn't bullet proof. Please observe the usual caution as well as making sure you have a backup method of 
+This code isn't bullet proof, the Web Bluetooth API is not stable and the Dev edition of Chrome for Android is, well,
+the Dev edition... Please observe the usual caution as well as making sure you have a backup method of 
 disabling the drone in the event of a bug (a technique I have used is to raise something like a strong piece of card
 up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
 

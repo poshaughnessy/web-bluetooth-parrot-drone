@@ -1,3 +1,13 @@
+/**
+ * Services:
+ *  - fa00 - contains 'write without response' characteristics starting with fa...
+ *  - fb00 - contains 'notify' characteristics starting with fb...
+ *  - fc00 - contains 'write' characteristic ffc1, not currently used
+ *  - fd21 - contains 'read write notify' characteristics fd22, fd23, fd24
+ *  - fd51 - contains 'read write notify' characteristics fd52, fd53, fd54
+ *  - fe00 - contains characteristics fe01, fe02, not currently used
+ */
+
 'use strict';
 
 // 'Travis_' for Airborne Cargo drone. Change to 'RS_' for Rolling Spider.
@@ -5,22 +15,11 @@ const DRONE_BLUETOOTH_NAME_PREFIX = 'Travis_';
 
 let App = function() {
 
-  /**
-   * Services:
-   *  - fa00 - contains 'write without response' characteristics starting with fa...
-   *  - fb00 - contains 'notify' characteristics starting with fb...
-   *  - fc00 - contains 'write' characteristic ffc1, not currently used
-   *  - fd21 - contains 'read write notify' characteristics fd22, fd23, fd24
-   *  - fd51 - contains 'read write notify' characteristics fd52, fd53, fd54
-   *  - fe00 - contains characteristics fe01, fe02, not currently used
-   */
-
   let connectButton = document.getElementById('connectBtn'),
     takeOffButton = document.getElementById('takeOffBtn'),
     flipButton = document.getElementById('flipBtn'),
     landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
-    resetCacheButton = document.getElementById('resetCacheBtn'),
     connected = false,
     droneDevice = null,
     gattServer = null,
@@ -122,19 +121,6 @@ let App = function() {
 
   }
 
-  // Disconnect does not appear to be implemented in Chrome for Android yet
-  /*
-  function disconnectGATT() {
-
-    return gattServer.disconnect()
-      .then(() => {
-        droneDevice = null;
-        gattServer = null;
-      })
-
-  }
-  */
-
   function _getService(serviceID) {
 
     return new Promise((resolve, reject) => {
@@ -225,14 +211,6 @@ let App = function() {
 
   }
 
-  /**
-   * XXX For some reason, trying to get the write service/characteristics after registering notifications often fails
-   * Trying this trick of caching them first...
-   */
-  function cacheWriteCharacteristics() {
-    return _getCharacteristic('fa00', 'fa0b');
-  }
-
   function connect() {
 
     console.log('Connect');
@@ -241,7 +219,6 @@ let App = function() {
     return discover()
       .then(() => { return connectGATT(); })
       .then(() => { return wait(100); })
-      .then(() => { return cacheWriteCharacteristics(); })
       .then(() => { return startNotifications() })
       .then(() => {
         connected = true;
@@ -251,21 +228,6 @@ let App = function() {
 
   }
 
-  // Disconnect does not appear to be implemented in Chrome for Android yet
-  /*
-  function disconnect() {
-
-    console.log('Disconnect');
-
-    return disconnectGATT()
-      .then(() => {
-        connected = false;
-        connectButton.innerHTML = 'CONNECT';
-        console.log('Disconnected');
-      });
-
-  }
-  */
 
   function takeOff() {
 
@@ -296,16 +258,6 @@ let App = function() {
     console.warn('Emergency cut off');
     return droneDevice.connectGATT()
       .then(() => {return writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);});
-
-  }
-
-  /**
-   * Hopefully only need this temporarily...
-   */
-  function resetCache() {
-
-    services = {};
-    characteristics = {};
 
   }
 
@@ -341,10 +293,6 @@ let App = function() {
     emergencyCutOff();
   });
 
-  resetCacheButton.addEventListener('click', () => {
-    resetCache();
-  });
-
   function startNotifications() {
 
     console.log('Start notifications...');
@@ -375,7 +323,5 @@ let App = function() {
   }
 
 };
-
-console.log('rev 1');
 
 App();
