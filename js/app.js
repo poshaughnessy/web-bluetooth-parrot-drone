@@ -80,10 +80,16 @@ let App = function() {
       });
   }
 
+  /**
+   * XXX Not sure why we need to keep calling this, but if we don't, we often get "GATT Service no longer exists" errors
+   */
   function connectGATT() {
+
+    console.log('Connect GATT');
 
     return droneDevice.connectGATT()
       .then(server => {
+        console.log('GATT server', server);
         gattServer = server;
       });
 
@@ -109,10 +115,12 @@ let App = function() {
       const service = services[serviceID];
 
       // If we already have it cached...
+      /*
       if (service) {
         console.log('Return cached service', service);
         resolve(service);
       } else {
+      */
 
         console.log('Get service', getUUID(serviceID));
 
@@ -127,7 +135,7 @@ let App = function() {
             reject(error);
           });
 
-      }
+      //}
 
     });
 
@@ -140,10 +148,12 @@ let App = function() {
       const char = characteristics[characteristicID];
 
       // If we already have it cached...
+      /*
       if (char) {
         console.log('Return cached characteristic', char);
         resolve(char);
       } else {
+      */
 
         return _getService(serviceID)
           .then(service => {
@@ -159,7 +169,7 @@ let App = function() {
             reject(error);
           });
 
-      }
+      //}
 
     });
 
@@ -188,14 +198,22 @@ let App = function() {
 
   }
 
+  /**
+   * XXX For some reason, trying to get the write service/characteristics after registering notifications often fails
+   * Trying this trick of caching them first...
+   */
+  function cacheWriteCharacteristics() {
+    return _getCharacteristic('fa00', 'fa0b');
+  }
 
   function connect() {
 
     console.log('Connect');
 
     return discover()
-      .then(() => { return connectGATT() })
-      .then(() => { return wait(500) })
+      .then(() => { return connectGATT(); })
+      .then(() => { return wait(500); })
+      .then(() => { return cacheWriteCharacteristics(); })
       .then(() => { return startNotifications() })
       .then(() => { return wait(500) })
       .then(() => {
@@ -225,28 +243,32 @@ let App = function() {
   function takeOff() {
 
     console.log('Take off...');
-    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);
+    return droneDevice.connectGATT()
+      .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);});
 
   }
 
   function flip() {
 
     console.log('Flip...');
-    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 4, 0, 0, 2, 0, 0, 0]);
+    return droneDevice.connectGATT()
+      .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 4, 0, 0, 2, 0, 0, 0]);});
 
   }
 
   function land() {
 
     console.log('Land...');
-    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
+    return droneDevice.connectGATT()
+      .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);});
 
   }
 
   function emergencyCutOff() {
 
     console.warn('Emergency cut off');
-    return writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
+    return droneDevice.connectGATT()
+      .then(() => {return writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);});
 
   }
 
@@ -321,10 +343,12 @@ let App = function() {
       .then(() => {return startNotificationsForCharacteristic('fd51', 'fd54')})
       .then(() => {return wait(100);})
       .then(() => {console.log('Finished starting notifications');})
-      .catch((error) => {console.error('Failed to start notifications', error);})
+      .catch((error) => {console.error('Failed to start notifications', error);});
 
   }
 
 };
+
+console.log('rev 1');
 
 App();
