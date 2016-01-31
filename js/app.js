@@ -51,8 +51,35 @@ let App = function() {
               console.log('Started notifications for', characteristicID);
 
               characteristic.addEventListener('characteristicvaluechanged', event => {
+
                 console.log('Notification from:', characteristicID);
-                console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
+                //console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
+
+                var char = event.characteristic;
+                var value = char.value;
+
+                console.log(char, value);
+
+                if (characteristicID === 'fb0e') {
+
+                  var eventList = ['fsLanded', 'fsTakingOff', 'fsHovering',
+                    'fsUnknown', 'fsLanding', 'fsCutOff'];
+
+                  var array = new Uint8Array(value);
+
+                  if (eventList[array[6]] === 'fsHovering') {
+                    console.log('Hovering - ready to go');
+                  } else {
+                    console.log('Not hovering... Not ready', array[6]);
+                  }
+                  if ([1, 2, 3, 4].indexOf(array[6]) >= 0) {
+                    console.log('Flying');
+                  }
+                  else {
+                    console.log('Not flying');
+                  }
+
+                }
               });
 
               resolve();
@@ -209,13 +236,13 @@ let App = function() {
   function connect() {
 
     console.log('Connect');
+    connectButton.innerHTML = 'CONNECTING...';
 
     return discover()
       .then(() => { return connectGATT(); })
-      .then(() => { return wait(500); })
+      .then(() => { return wait(100); })
       .then(() => { return cacheWriteCharacteristics(); })
       .then(() => { return startNotifications() })
-      .then(() => { return wait(500) })
       .then(() => {
         connected = true;
         connectButton.innerHTML = 'CONNECTED';
