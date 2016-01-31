@@ -1,6 +1,8 @@
 # Web Bluetooth Parrot Mini Drone Demo
 
 Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web?hl=en).
+
+![Parrot mini drone](docs/images/parrot-mini-drone.jpg?raw=true "Parrot mini drone") 
  
 ## Setup
 
@@ -15,9 +17,21 @@ NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, 
 
 If you have trouble debugging in the standard Chrome version, try Chrome Canary (it worked better for me).
 
+It's currently configured for a "Travis" (Airborne Cargo) drone, but you can switch the type of mini drone to look
+for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.   
+
 ## Then...
 
 * Ensure the drone is switched on and the lights are green.
 * Press the 'Go' button
 * Select your drone name to pair with
-* Watch in awe as it takes off and lands again!
+
+![Pair screen](docs/images/pair-screen.png?raw=true "Pair screen")
+
+## Now you're in control!
+
+* Try Connect first, then Take Off and Land.
+
+## Video
+
+Coming soon...

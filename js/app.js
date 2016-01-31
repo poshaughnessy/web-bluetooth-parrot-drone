@@ -1,5 +1,8 @@
 'use strict';
 
+// 'Travis_' for Airborne Cargo drone. Change to 'RS_' for Rolling Spider.
+const DRONE_BLUETOOTH_NAME_PREFIX = 'Travis_';
+
 let App = function() {
 
   /**
@@ -56,7 +59,7 @@ let App = function() {
     console.log('Searching for drone...');
     return navigator.bluetooth.requestDevice({
       filters: [{
-        namePrefix: 'Travis_' // Travis (Airborne Cargo) drone - change to RS_ for Rolling Spider, etc.
+        namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
       }]
     });
   }
@@ -156,7 +159,7 @@ let App = function() {
   function initialiseConnection() {
 
     console.log('Connect');
-    
+
     return discover()
       .then(device => { return connect(device) })
       .then(() => { return registerNotifications() })
