@@ -17,6 +17,7 @@ let App = function() {
 
   let connectButton = document.getElementById('connectBtn'),
     takeOffButton = document.getElementById('takeOffBtn'),
+    flipButton = document.getElementById('flipBtn'),
     landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
     droneDevice = null,
@@ -83,9 +84,11 @@ let App = function() {
       const char = characteristics[characteristicID];
 
       // If we already have it cached...
+      /*
       if (char) {
         resolve(char);
       } else {
+      */
 
         return _getService(serviceID)
           .then(service => { return service.getCharacteristic( getUUID(characteristicID) ) })
@@ -97,7 +100,9 @@ let App = function() {
             console.error('_getCharacteristic error', error);
             reject(error);
           });
+      /*
       }
+      */
 
     });
 
@@ -110,9 +115,11 @@ let App = function() {
       const service = services[serviceID];
 
       // If we already have it cached...
+      /*
       if (service) {
         resolve(service);
       } else {
+      */
 
         return gattServer.getPrimaryService(getUUID(serviceID))
           .then(service => {
@@ -124,7 +131,9 @@ let App = function() {
             reject(error);
           });
 
+      /*
       }
+      */
 
     });
 
@@ -178,6 +187,13 @@ let App = function() {
 
   }
 
+  function flip() {
+
+    console.log('Flip...');
+    return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 4, 0, 0, 2, 0, 0, 0]);
+
+  }
+
   function land() {
 
     console.log('Land...');
@@ -206,6 +222,10 @@ let App = function() {
 
   takeOffButton.addEventListener('click', () => {
     takeOff();
+  });
+
+  flipButton.addEventListener('click', () => {
+    flip();
   });
 
   landButton.addEventListener('click', () => {
