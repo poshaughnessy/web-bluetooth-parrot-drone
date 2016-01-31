@@ -56,6 +56,7 @@
 
   let goButton = document.getElementById('goBtn'),
     stopButton = document.getElementById('stopBtn'),
+    emergencyButton = document.getElementById('emergencyBtn'),
     droneDevice = null,
     gattServer = null,
     // Used to store the 'counter' that's sent to each characteristic
