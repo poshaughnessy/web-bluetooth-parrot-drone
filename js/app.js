@@ -20,6 +20,7 @@ let App = function() {
     flipButton = document.getElementById('flipBtn'),
     landButton = document.getElementById('landBtn'),
     emergencyButton = document.getElementById('emergencyBtn'),
+    resetCacheButton = document.getElementById('resetCacheBtn'),
     connected = false,
     droneDevice = null,
     gattServer = null,
@@ -37,22 +38,32 @@ let App = function() {
     return '9a66' + uniqueSegment + '-0800-9191-11e4-012d1540cb8e';
   }
 
-  function startNotifications(serviceID, characteristicID) {
+  function startNotificationsForCharacteristic(serviceID, characteristicID) {
 
-    console.log('Start notifications', characteristicID);
+    console.log('Start notifications for', characteristicID);
 
-    return _getCharacteristic(serviceID, characteristicID)
-      .then(characteristic => {
+    return new Promise((resolve, reject) => {
+      return _getCharacteristic(serviceID, characteristicID)
+        .then(characteristic => {
+          console.log('Got characteristic, now start notifications', characteristicID, characteristic);
+          characteristic.startNotifications()
+            .then(() => {
+              console.log('Started notifications for', characteristicID);
 
-        characteristic.startNotifications().then(() => {
-          characteristic.addEventListener('characteristicvaluechanged', event => {
-            console.log('Notification from:', characteristicID);
-            console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
+              characteristic.addEventListener('characteristicvaluechanged', event => {
+                console.log('Notification from:', characteristicID);
+                console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
+              });
+
+              resolve();
           });
-        });
 
-      })
-      .catch(error => { console.error('startNotifications error', error)});
+        })
+        .catch(error => {
+          console.error('startNotifications error', error);
+          reject();
+        });
+    });
 
   }
 
@@ -91,37 +102,6 @@ let App = function() {
   }
   */
 
-  function _getCharacteristic(serviceID, characteristicID) {
-
-    return new Promise((resolve, reject) => {
-
-      const char = characteristics[characteristicID];
-
-      // If we already have it cached...
-      /*
-      if (char) {
-        resolve(char);
-      } else {
-      */
-
-        return _getService(serviceID)
-          .then(service => { return service.getCharacteristic( getUUID(characteristicID) ) })
-          .then(characteristic => {
-            characteristics[characteristicID] = characteristic;
-            resolve(characteristic);
-          })
-          .catch(error => {
-            console.error('_getCharacteristic error', error);
-            reject(error);
-          });
-      /*
-      }
-      */
-
-    });
-
-  }
-
   function _getService(serviceID) {
 
     return new Promise((resolve, reject) => {
@@ -129,14 +109,16 @@ let App = function() {
       const service = services[serviceID];
 
       // If we already have it cached...
-      /*
       if (service) {
+        console.log('Return cached service', service);
         resolve(service);
       } else {
-      */
+
+        console.log('Get service', getUUID(serviceID));
 
         return gattServer.getPrimaryService(getUUID(serviceID))
           .then(service => {
+            console.log('Obtained service', service);
             services[serviceID] = service;
             resolve(service);
           })
@@ -145,9 +127,39 @@ let App = function() {
             reject(error);
           });
 
-      /*
       }
-      */
+
+    });
+
+  }
+
+  function _getCharacteristic(serviceID, characteristicID) {
+
+    return new Promise((resolve, reject) => {
+
+      const char = characteristics[characteristicID];
+
+      // If we already have it cached...
+      if (char) {
+        console.log('Return cached characteristic', char);
+        resolve(char);
+      } else {
+
+        return _getService(serviceID)
+          .then(service => {
+            return service.getCharacteristic( getUUID(characteristicID) )
+          })
+          .then(characteristic => {
+            characteristics[characteristicID] = characteristic;
+            console.log('Obtained characteristic', characteristic);
+            resolve(characteristic);
+          })
+          .catch(error => {
+            console.error('_getCharacteristic error', error);
+            reject(error);
+          });
+
+      }
 
     });
 
@@ -169,10 +181,9 @@ let App = function() {
 
     return _getCharacteristic(serviceID, characteristicID)
       .then(characteristic => {
-        return _writeCommand(characteristic, commandArray);
-      })
-      .then(() => {
-        console.log('Written command');
+        console.log('Got characteristic, now write');
+        return _writeCommand(characteristic, commandArray)
+          .then(() => {console.log('Written command');});
       });
 
   }
@@ -185,7 +196,7 @@ let App = function() {
     return discover()
       .then(() => { return connectGATT() })
       .then(() => { return wait(500) })
-      .then(() => { return registerNotifications() })
+      .then(() => { return startNotifications() })
       .then(() => { return wait(500) })
       .then(() => {
         connected = true;
@@ -239,9 +250,21 @@ let App = function() {
 
   }
 
+  /**
+   * Hopefully only need this temporarily...
+   */
+  function resetCache() {
+
+    services = {};
+    characteristics = {};
+
+  }
+
   function wait(millis) {
+    console.log('wait', millis);
     return new Promise((resolve) => {
-      setInterval(() => {
+      setTimeout(() => {
+        console.log('waited');
         resolve();
       }, millis);
     });
@@ -269,20 +292,36 @@ let App = function() {
     emergencyCutOff();
   });
 
-  function registerNotifications() {
+  resetCacheButton.addEventListener('click', () => {
+    resetCache();
+  });
 
-    console.log('Register notifications...');
+  function startNotifications() {
 
-    return startNotifications('fb00', 'fb0f')
-      .then(() => {startNotifications('fb00', 'fb0e')})
-      .then(() => {startNotifications('fb00', 'fb1b')})
-      .then(() => {startNotifications('fb00', 'fb1c')})
-      .then(() => {startNotifications('fd21', 'fd22')})
-      .then(() => {startNotifications('fd21', 'fd23')})
-      .then(() => {startNotifications('fd21', 'fd24')})
-      .then(() => {startNotifications('fd51', 'fd52')})
-      .then(() => {startNotifications('fd51', 'fd53')})
-      .then(() => {startNotifications('fd51', 'fd54')})
+    console.log('Start notifications...');
+
+    return startNotificationsForCharacteristic('fb00', 'fb0f')
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fb00', 'fb0e')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fb00', 'fb1b')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fb00', 'fb1c')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd21', 'fd22')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd21', 'fd23')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd21', 'fd24')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd51', 'fd52')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd51', 'fd53')})
+      .then(() => {return wait(100);})
+      .then(() => {return startNotificationsForCharacteristic('fd51', 'fd54')})
+      .then(() => {return wait(100);})
+      .then(() => {console.log('Finished starting notifications');})
+      .catch((error) => {console.error('Failed to start notifications', error);})
 
   }
 

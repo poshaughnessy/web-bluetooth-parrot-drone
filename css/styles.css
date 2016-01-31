@@ -7,7 +7,7 @@ body {
 #headline {
   width: 100%;
   max-width: 600px;
-  margin: 20px auto;
+  margin: 15px auto 10px auto;
 }
 
 button {
@@ -24,3 +24,10 @@ button {
   font-style: italic;
 }
 
+a {
+  margin-top: 30px;
+  display: block;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+}
