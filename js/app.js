@@ -187,7 +187,7 @@
       .then(() => { return registerNotifications() })
       .then(() => { return wait(1000) })
       .then(() => { return takeOff() })
-      .then(() => { return wait(3000) })
+      .then(() => { return wait(5000) })
       .then(() => { return land() })
       .catch(error => { console.error('Error', error) });
 
