@@ -4,51 +4,51 @@
 
   /*
   const SERVICES = {
-    'fa00': formatUUID('fa00'),
-    'fb00': formatUUID('fb00'),
-    'fc00': formatUUID('fc00'),
-    'fd21': formatUUID('fd21'),
-    'fd51': formatUUID('fd51'),
-    'fe00': formatUUID('fe00')
+    'fa00': getUUID('fa00'),
+    'fb00': getUUID('fb00'),
+    'fc00': getUUID('fc00'),
+    'fd21': getUUID('fd21'),
+    'fd51': getUUID('fd51'),
+    'fe00': getUUID('fe00')
   };
 
   // There are 32 'Write Without Response' characteristics in the fa00 service! But only using a couple of them.
   const WRITE_WITHOUT_RESPONSE_CHARACTERISTICS = {
-    'fa0a': formatUUID('fa0a'),
-    'fa0b': formatUUID('fa0b')
+    'fa0a': getUUID('fa0a'),
+    'fa0b': getUUID('fa0b')
   };
   
   // There are 32 'Notify' characteristics in the fb00 service! But only using four of them.
   const NOTIFY_CHARACTERISTICS = {
-    'fb0f': formatUUID('fb0f'),
-    'fb0e': formatUUID('fb0e'),
-    'fb1b': formatUUID('fb1b'),
-    'fb1c': formatUUID('fb1c')
+    'fb0f': getUUID('fb0f'),
+    'fb0e': getUUID('fb0e'),
+    'fb1b': getUUID('fb1b'),
+    'fb1c': getUUID('fb1c')
   };
 
   // There is 1 'Write' characteristic in the fc00 service. Not currently used.
   const WRITE_CHARACTERISTIC = {
-    'ffc1': formatUUID('ffc1')
+    'ffc1': getUUID('ffc1')
   }
 
   // There are 3 'Read Write Notify' characteristics in the fd21 service.
   const READ_WRITE_NOTIFY_CHARACTERISTICS_1 = {
-    'fd22': formatUUID('fd22'),
-    'fd23': formatUUID('fd23'),
-    'fd24': formatUUID('fd24')
+    'fd22': getUUID('fd22'),
+    'fd23': getUUID('fd23'),
+    'fd24': getUUID('fd24')
   };
 
   // There are 3 'Read Write Notify' characteristics in the fd51 service
   const READ_WRITE_NOTIFY_CHARACTERISTICS_2 = {
-    'fd52': formatUUID('fd52'),
-    'fd53': formatUUID('fd53'),
-    'fd54': formatUUID('fd54')
+    'fd52': getUUID('fd52'),
+    'fd53': getUUID('fd53'),
+    'fd54': getUUID('fd54')
   };
 
   // There are 2 more characteristics in the fe00 service. Not currently used.
   const MISC_CHARACTERISTICS = {
-    'fe01': formatUUID('fe01'),
-    'fe02': formatUUID('fe02')
+    'fe01': getUUID('fe01'),
+    'fe02': getUUID('fe02')
   };
   */
 
@@ -65,6 +65,7 @@
       'fa0b': 1,
       'fa0c': 1
     },
+    services = {},
     characteristics = {};
     /*
     ping = null,
@@ -78,20 +79,20 @@
     */
 
 
-  function formatUUID(uniqueSegment) {
+  function getUUID(uniqueSegment) {
     return '9a66' + uniqueSegment + '-0800-9191-11e4-012d1540cb8e';
   }
 
-  function startNotifications(service, characteristicUUID) {
+  function startNotifications(serviceID, characteristicID) {
 
-    console.log('Start notifications', characteristicUUID);
+    console.log('Start notifications', characteristicID);
 
-    service.getCharacteristic(characteristicUUID)
+    return _getCharacteristic(serviceID, characteristicID)
       .then(characteristic => {
 
         characteristic.startNotifications().then(() => {
           characteristic.addEventListener('characteristicvaluechanged', event => {
-            console.log('Notification from:', characteristicUUID);
+            console.log('Notification from:', characteristicID);
             console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
           });
         });
@@ -116,13 +117,50 @@
 
     droneDevice = device;
 
-    return droneDevice.connectGATT();
+    return droneDevice.connectGATT()
+      .then(server => {
+        gattServer = server;
+      });
+
+  }
+
+  function _getCharacteristic(serviceID, characteristicID) {
+
+    const char = characteristics[characteristicID];
+
+    return char ? char : _getService(serviceID)
+      .then(service => { return service.getCharacteristic( getUUID(characteristicID) ) })
+      .then(characteristic => {
+        characteristics[characteristicID] = characteristic;
+        return characteristic;
+      })
+      .catch(error => {
+        console.error('_getCharacteristic error', error);
+      });
+  }
+
+  function _getService(serviceID) {
+
+    const service = services[serviceID];
+
+    return service ? service : gattServer.getPrimaryService( getUUID(serviceID) )
+      .then(service => {
+        services[serviceID] = service;
+        return service;
+      })
+      .catch(error => {
+        console.error('_getService error', error);
+      });
 
   }
 
   function _writeCommand(characteristic, commandArray) {
 
-    var command = new Uint8Array(array);
+    //var command = new Uint8Array(commandArray);
+
+    var buffer = new ArrayBuffer(commandArray.length);
+    var command = new Uint8Array(buffer);
+    command.set(commandArray);
 
     return characteristic.writeValue(command).then(() => {
       console.log('Written command');
@@ -132,25 +170,10 @@
 
   function writeTo(serviceID, characteristicID, commandArray) {
 
-    const char = characteristics[characteristicID];
-
-    if (char) {
-
-      return _writeCommand(char, commandArray);
-
-    } else {
-
-      // XXX Better to grab all at once? But currently no 'getCharacteristics' (plural) implemented in Chrome for Android?
-      return gattServer.getPrimaryService( formatUUID(serviceID) )
-        .then(service => { return service.getCharacteristic( formatUUID(characteristicID) ) })
-        .then(characteristic => {
-
-          characteristics[characteristicID] = characteristic;
-
-          return _writeCommand(characteristic, commandArray);
-        });
-
-    }
+    _getCharacteristic(serviceID, characteristicID)
+      .then(characteristic => {
+        return _writeCommand(characteristic, commandArray);
+      });
 
   }
 
@@ -189,7 +212,7 @@
 
     discover()
       .then(device => { return connect(device) })
-      .then(server => { return registerNotifications(server) })
+      .then(() => { return registerNotifications() })
       .then(() => { return wait(1000) })
       .then(() => { return takeOff() })
       .then(() => { return wait(3000) })
@@ -211,46 +234,25 @@
     emergencyCutOff();
   });
 
-  /*
-  function registerNotifications(server) {
+  function registerNotifications() {
 
     console.log('Register notifications...');
 
-    gattServer = server;
+    ['fb0f', 'fb0e', 'fb1b', 'fb1c'].forEach((key) => {
+      startNotifications('fb00', key);
+    });
 
-    return gattServer.getPrimaryService( SERVICES.fb00 )
-      .then(service => {
+    ['fd22', 'fd23', 'fd24'].forEach((key) => {
+      startNotifications('fd21', key);
+    });
 
-        console.log('Service', service);
-
-        ['fb0f', 'fb0e', 'fb1b', 'fb1c'].forEach((key) => {
-          startNotifications(service, NOTIFY_CHARACTERISTICS[key]);
-        });
-
-      })
-      .then(() => {return gattServer.getPrimaryService( SERVICES.fd21 )})
-      .then(service => {
-
-        console.log('Service', service);
-
-        ['fd22', 'fd23', 'fd24'].forEach((key) => {
-          startNotifications(service, READ_WRITE_NOTIFY_CHARACTERISTICS_1[key]);
-        });
-
-      })
-      .then(() => {return gattServer.getPrimaryService( SERVICES.fd51 )})
-      .then(service => {
-
-        console.log('Service', service);
-
-        ['fd52', 'fd53', 'fd54'].forEach((key) => {
-          startNotifications(service, READ_WRITE_NOTIFY_CHARACTERISTICS_2[key]);
-        });
-
-      });
+    ['fd52', 'fd53', 'fd54'].forEach((key) => {
+      startNotifications('fd51', key);
+    });
 
   }
 
+  /*
   function handshake() {
 
     console.log('Handshake...');
