@@ -126,31 +126,55 @@
 
   function _getCharacteristic(serviceID, characteristicID) {
 
-    const char = characteristics[characteristicID];
+    return new Promise(function(resolve, reject) {
 
-    return char ? char : _getService(serviceID)
-      .then(service => { return service.getCharacteristic( getUUID(characteristicID) ) })
-      .then(characteristic => {
-        characteristics[characteristicID] = characteristic;
-        return characteristic;
-      })
-      .catch(error => {
-        console.error('_getCharacteristic error', error);
-      });
+      const char = characteristics[characteristicID];
+
+      // If we already have it cached...
+      if (char) {
+        resolve(char);
+      } else {
+
+        return _getService(serviceID)
+          .then(service => { return service.getCharacteristic( getUUID(characteristicID) ) })
+          .then(characteristic => {
+            characteristics[characteristicID] = characteristic;
+            resolve(characteristic);
+          })
+          .catch(error => {
+            console.error('_getCharacteristic error', error);
+            reject(error);
+          });
+      }
+
+    });
+
   }
 
   function _getService(serviceID) {
 
-    const service = services[serviceID];
+    return new Promise(function(resolve, reject) {
 
-    return service ? service : gattServer.getPrimaryService( getUUID(serviceID) )
-      .then(service => {
-        services[serviceID] = service;
-        return service;
-      })
-      .catch(error => {
-        console.error('_getService error', error);
-      });
+      const service = services[serviceID];
+
+      // If we already have it cached...
+      if (service) {
+        resolve(service);
+      } else {
+
+        return gattServer.getPrimaryService(getUUID(serviceID))
+          .then(service => {
+            services[serviceID] = service;
+            resolve(service);
+          })
+          .catch(error => {
+            console.error('_getService error', error);
+            reject(error);
+          });
+
+      }
+
+    });
 
   }
 
@@ -204,7 +228,7 @@
   function emergencyCutOff() {
 
     console.warn('Emergency cut off');
-    writeTo('fa00', 'fa0c', [0x02, steps.fa0c & 0xFF, 0x02, 0x00, 0x04, 0x00]);
+    writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
 
   }
 
