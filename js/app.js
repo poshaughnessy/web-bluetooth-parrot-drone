@@ -51,13 +51,9 @@ let App = function() {
 
               characteristic.addEventListener('characteristicvaluechanged', event => {
 
-                console.log('Notification from:', characteristicID);
-                //console.log('> characteristicvaluechanged', event.target.value, event.target.value.byteLength);
+                console.log('Notification from:', characteristicID, event);
 
-                var char = event.characteristic;
-                var value = char.value;
-
-                console.log(char, value);
+                const value = event.target.value;
 
                 if (characteristicID === 'fb0e') {
 
