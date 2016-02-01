@@ -43,10 +43,10 @@ up towards the drone from underneath. When it detects it has been touched, the d
 
 ## Troubleshooting
 
-Unfortunately it seems pretty flaky, presumably because it's an experimental API. For the best chance of success,
-close and re-open Chrome for Android Dev first, and reload the page, plus switch the drone off and on again and wait
-for the green lights. Having the remote debugging tools open in Chrome Canary seems like it might help too (it will
-help you to see where it's going wrong, at least).
+Unfortunately it is a bit flaky, presumably because it's an experimental API. For the best chance of success,
+close and re-open Chrome for Android Dev first (plus reload the page if you made changes). Having the remote debugging 
+tools open in Chrome Canary seems like it may help too (it will help you to see where it's going wrong, at least).
+If that still fails, try switching the drone off and on again, wait for the green lights, and then try the above again.
 
 If you spot any fixes / improvements that could be made, PRs are very welcome!
 
