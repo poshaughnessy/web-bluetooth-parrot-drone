@@ -39,8 +39,17 @@ up towards the drone from underneath. When it detects it has been touched, the d
 
 ![Pair screen](docs/images/pair-screen.png?raw=true "Pair screen")
 
-* Now you're in control! Try Take Off and Land. Flips coming soon!  
- 
+* Now you're in control! Try Take Off, Flip and Land.  
+
+## Troubleshooting
+
+Unfortunately it seems pretty flaky, presumably because it's an experimental API. For the best chance of success,
+close and re-open Chrome for Android Dev first, and reload the page, plus switch the drone off and on again and wait
+for the green lights. Having the remote debugging tools open in Chrome Canary seems like it might help too (it will
+help you to see where it's going wrong, at least).
+
+If you spot any fixes / improvements that could be made, PRs are very welcome!
+
 
 ## Demo Video
 
