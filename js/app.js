@@ -94,8 +94,14 @@ let App = function() {
     return navigator.bluetooth.requestDevice({
         filters: [{
           namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
-        }]
-      })
+        }],
+	'optionalServices': [ getUUID('fa00'),
+			      getUUID('fb00'),
+			      getUUID('fc00'),
+			      getUUID('fd21'),
+			      getUUID('fd51'),
+			      getUUID('fe00') ]
+    })
       .then((device) => {
         console.log('Discovered drone', device);
         droneDevice = device;
