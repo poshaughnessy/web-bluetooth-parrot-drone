@@ -92,9 +92,19 @@ let App = function() {
   function discover() {
     console.log('Searching for drone...');
     return navigator.bluetooth.requestDevice({
-        filters: [{
-          namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
-        }]
+        filters: [
+          {
+            namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
+          },
+          {
+            services: [
+              getUUID('fa00'),
+              getUUID('fb00'),
+              getUUID('fd21'),
+              getUUID('fd51')
+            ]
+          }
+        ]
       })
       .then((device) => {
         console.log('Discovered drone', device);
@@ -109,7 +119,7 @@ let App = function() {
 
     console.log('Connect GATT');
 
-    return droneDevice.connectGATT()
+    return droneDevice.gatt.connect()
       .then(server => {
         console.log('GATT server', server);
         gattServer = server;
@@ -228,7 +238,7 @@ let App = function() {
   function takeOff() {
 
     console.log('Take off...');
-    return droneDevice.connectGATT()
+    return droneDevice.gatt.connect()
       .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);});
 
   }
@@ -236,7 +246,7 @@ let App = function() {
   function flip() {
 
     console.log('Flip...');
-    return droneDevice.connectGATT()
+    return droneDevice.gatt.connect()
       .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 4, 0, 0, 2, 0, 0, 0]);});
 
   }
@@ -244,7 +254,7 @@ let App = function() {
   function land() {
 
     console.log('Land...');
-    return droneDevice.connectGATT()
+    return droneDevice.gatt.connect()
       .then(() => {return writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);});
 
   }
@@ -252,7 +262,7 @@ let App = function() {
   function emergencyCutOff() {
 
     console.warn('Emergency cut off');
-    return droneDevice.connectGATT()
+    return droneDevice.gatt.connect()
       .then(() => {return writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);});
 
   }
