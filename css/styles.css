@@ -4,10 +4,12 @@ body {
   color: #fff;
 }
 
-#headline {
-  width: 100%;
-  max-width: 600px;
-  margin: 15px auto 10px auto;
+h1 {
+  font-family: 'Helvetica Neue', Helvetica, arial, sans-serif;
+  text-shadow: 2px 2px 2px #0b81b0;
+  font-style: italic;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 button {
@@ -22,6 +24,7 @@ button {
   font-size: 1.2em;
   font-weight: bold;
   font-style: italic;
+  text-transform: uppercase;
 }
 
 a {
