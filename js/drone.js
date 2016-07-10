@@ -128,27 +128,24 @@ let ParrotDrone = function() {
       const service = services[serviceID];
 
       // If we already have it cached...
-      /*
-       if (service) {
-       console.log('Return cached service', service);
-       resolve(service);
-       } else {
-       */
+      if (service) {
+        console.log('Return cached service', service);
+        resolve(service);
+      } else {
 
-      console.log('Get service', _getUUID(serviceID));
+        console.log('Get service', _getUUID(serviceID));
 
-      return gattServer.getPrimaryService(_getUUID(serviceID))
-        .then(service => {
-          console.log('Obtained service', service);
-          services[serviceID] = service;
-          resolve(service);
-        })
-        .catch(error => {
-          console.error('_getService error', error);
-          reject(error);
-        });
-
-      //}
+        return gattServer.getPrimaryService(_getUUID(serviceID))
+          .then(service => {
+            console.log('Obtained service', service);
+            services[serviceID] = service;
+            resolve(service);
+          })
+          .catch(error => {
+            console.error('_getService error', error);
+            reject(error);
+          });
+      }
 
     });
 
@@ -161,28 +158,25 @@ let ParrotDrone = function() {
       const char = characteristics[characteristicID];
 
       // If we already have it cached...
-      /*
-       if (char) {
-       console.log('Return cached characteristic', char);
-       resolve(char);
-       } else {
-       */
+      if (char) {
+        console.log('Return cached characteristic', char);
+        resolve(char);
+      } else {
 
-      return _getService(serviceID)
-        .then(service => {
-          return service.getCharacteristic( _getUUID(characteristicID) )
-        })
-        .then(characteristic => {
-          characteristics[characteristicID] = characteristic;
-          console.log('Obtained characteristic', characteristic);
-          resolve(characteristic);
-        })
-        .catch(error => {
-          console.error('_getCharacteristic error', error);
-          reject(error);
-        });
-
-      //}
+        return _getService(serviceID)
+          .then(service => {
+            return service.getCharacteristic( _getUUID(characteristicID) )
+          })
+          .then(characteristic => {
+            characteristics[characteristicID] = characteristic;
+            console.log('Obtained characteristic', characteristic);
+            resolve(characteristic);
+          })
+          .catch(error => {
+            console.error('_getCharacteristic error', error);
+            reject(error);
+          });
+      }
 
     })
 
@@ -295,7 +289,7 @@ let ParrotDrone = function() {
 
     emergencyCutOff: function () {
 
-      console.warn('Emergency cut off');
+      console.warn('Emergency cut off!');
       return droneDevice.gatt.connect()
         .then(() => {
           return _writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
