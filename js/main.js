@@ -26,7 +26,6 @@
     emergencyButton.addEventListener('click', drone.emergencyCutOff);
   }
 
-  /*
   function installServiceWorker() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -36,9 +35,8 @@
       });
     }
   }
-  */
 
   setupUI();
-  installServiceWorker();
+  //installServiceWorker();
 
 })();
