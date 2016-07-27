@@ -106,9 +106,6 @@ let ParrotDrone = function() {
       });
   }
 
-  /**
-   * XXX Not sure why we need to keep calling this, but if we don't, we often get "GATT Service no longer exists" errors
-   */
   function _connectGATT() {
 
     console.log('Connect GATT');
