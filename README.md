@@ -40,7 +40,7 @@ This code isn't bulletproof and the Web Bluetooth API is still pretty new. Pleas
 
 ## Troubleshooting
 
-Unfortunately it is a bit flaky at the moment. I need to spend some more time getting it to work more reliably and figuring out if there are issues with the app code, the Web Bluetooth API, and/or the actual commands we're sending to the drone. For the best chance of success, close and re-open Chrome for Android Dev first (plus reload the page if you made changes).
+Unfortunately it is a bit flaky at the moment. I need to spend some more time getting it to work more reliably and figuring out if there are issues with the app code, the Web Bluetooth API, and/or the actual commands we're sending to the drone. For the best chance of success, close and re-open Chrome for Android first (plus reload the page if you made changes).
 If that still fails, try switching the drone off and on again, wait for the green lights, and then try the above again. You can have the remote debugging tools open in Chrome to see the console logs and this may help you to see where it's going wrong, at least.
 
 If you spot any fixes / improvements that could be made, PRs are very welcome!
