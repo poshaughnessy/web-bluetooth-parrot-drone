@@ -10,7 +10,7 @@ Currently requires Chrome for Android.
 
 Run the web app up on your dev machine with: `python -m SimpleHTTPServer 8080`
 
-Go to [chrome://inspect/#devices](chrome://inspect/#devices) and enable port forwarding for port 8080.
+Go to `chrome://inspect/#devices` and enable port forwarding for port 8080.
 Now you should be able to visit `localhost:8080` on your Android device, to see the dashboard. 
 
 NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, if not serving from `localhost`. 
