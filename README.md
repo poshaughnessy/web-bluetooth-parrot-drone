@@ -6,7 +6,7 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
  
 ## Setup
 
-Currently requires Chrome for Android Dev edition, with the [Web Bluetooth flag enabled](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web#before-we-start).
+Currently requires Chrome for Android.
 
 Run the web app up on your dev machine with: `python -m SimpleHTTPServer 8080`
 
@@ -15,14 +15,14 @@ Now you should be able to visit `localhost:8080` on your Android device, to see 
 
 NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, if not serving from `localhost`. 
 
-If you have trouble debugging in the standard Chrome version, try Chrome Canary (it worked better for me).
+If you wish to host a version somewhere, it will need to be over HTTPS and you will need the [Web Bluetooth flag enabled in the browser](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web#before-we-start) or to register your site for an [origin trial](https://github.com/jpchase/OriginTrials).
 
 It's currently configured for a "Travis" (Airborne Cargo) drone, but you can switch the type of mini drone to look
 for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.   
 
 ## Safety warning
 
-This code isn't bullet proof and the Web Bluetooth API is still pretty new. Please observe the usual caution as well as making sure you have a backup method of disabling the drone in the event of a bug! (A technique I have used is to raise something like a strong piece of card up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
+This code isn't bulletproof and the Web Bluetooth API is still pretty new. Please observe the usual caution with drone flying as well as making sure you have a backup method of disabling the drone in the event of a bug! (A technique I have used is to raise something like a strong piece of card up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
 
 ## Then...
 
