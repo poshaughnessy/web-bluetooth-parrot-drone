@@ -22,10 +22,7 @@ for - see `DRONE_BLUETOOTH_NAME_PREFIX` at the top of app.js.
 
 ## Safety warning
 
-This code isn't bullet proof, the Web Bluetooth API is not stable and the Dev edition of Chrome for Android is, well,
-the Dev edition... Please observe the usual caution as well as making sure you have a backup method of 
-disabling the drone in the event of a bug (a technique I have used is to raise something like a strong piece of card
-up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
+This code isn't bullet proof and the Web Bluetooth API is still pretty new. Please observe the usual caution as well as making sure you have a backup method of disabling the drone in the event of a bug! (A technique I have used is to raise something like a strong piece of card up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
 
 ## Then...
 
@@ -43,10 +40,8 @@ up towards the drone from underneath. When it detects it has been touched, the d
 
 ## Troubleshooting
 
-Unfortunately it is a bit flaky, presumably because it's an experimental API. For the best chance of success,
-close and re-open Chrome for Android Dev first (plus reload the page if you made changes). Having the remote debugging 
-tools open in Chrome Canary seems like it may help too (it will help you to see where it's going wrong, at least).
-If that still fails, try switching the drone off and on again, wait for the green lights, and then try the above again.
+Unfortunately it is a bit flaky at the moment. I need to spend some more time getting it to work more reliably and figuring out if there are issues with the app code, the Web Bluetooth API, and/or the actual commands we're sending to the drone. For the best chance of success, close and re-open Chrome for Android Dev first (plus reload the page if you made changes).
+If that still fails, try switching the drone off and on again, wait for the green lights, and then try the above again. You can have the remote debugging tools open in Chrome to see the console logs and this may help you to see where it's going wrong, at least.
 
 If you spot any fixes / improvements that could be made, PRs are very welcome!
 
