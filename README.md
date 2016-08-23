@@ -59,7 +59,8 @@ welcome!
 
 ## Thanks
 
-I am indebted to [voodootikigod's rolling spider] project for demonstrating how to communicate with the drone.
+I am indebted to [voodootikigod's rolling spider](https://github.com/voodootikigod/node-rolling-spider) project for 
+demonstrating how to communicate with the drone. This demo borrows a lot from it.
 
 Thanks also to [@beaufortfrancois](https://github.com/beaufortfrancois) for collaborating with me to get the demo 
 working better!
