@@ -24,6 +24,14 @@ let ParrotDrone = function() {
       'fa0b': 1,
       'fa0c': 1
     },
+    speeds = {
+      yaw: 0,     // turn
+      pitch: 0,   // forward/backward
+      roll: 0,    // left/right
+      altitude: 0 // up/down
+    },
+    ping = null,
+    driveStepsRemaining = 0,
     services = {},
     characteristics = {};
 
@@ -222,9 +230,84 @@ let ParrotDrone = function() {
 
   }
 
+  function _handshake() {
+
+    console.log('Handshake');
+
+    return droneDevice.gatt.connect()
+      .then(() => {
+        return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 0, 4, 1, 0, 0x32, 0x30, 0x31, 0x34, 0x2D, 0x31, 0x30, 0x2D, 0x32, 0x38, 0x00]);
+      });
+
+  }
+
+  function _hover() {
+
+    console.log('Hover');
+
+    driveStepsRemaining = 0;
+    speeds.yaw = 0;
+    speeds.pitch = 0;
+    speeds.roll = 0;
+    speeds.altitude = 0;
+
+  }
+
+  function _startPing() {
+
+    console.log('Start ping');
+
+    ping = setInterval(() => {
+
+      console.log('Ping');
+
+      _writeTo('fa00', 'fa0a',
+        [
+          2,
+          ++steps.fa0a,
+          2,
+          0,
+          2,
+          0,
+          driveStepsRemaining ? 1 : 0,
+          speeds.roll,
+          speeds.pitch,
+          speeds.yaw,
+          speeds.altitude,
+          0
+        ])
+        .then(() => {
+          console.log('Ping command written successfully');
+        })
+        .catch(_onBluetoothError);
+
+      if (driveStepsRemaining > 0) {
+        driveStepsRemaining--;
+      } else {
+        console.log('Move complete, reset to hover state');
+        _hover();
+      }
+
+
+
+    }, 50);
+
+  }
+
+  function _onBluetoothError(err) {
+
+    console.error('Error!', err);
+    clearInterval(ping);
+
+  }
+
   return {
 
     connect: function() {
+
+      // TODO allow tapping again to disconnect
+      // clearInterval(ping);
+      // connected = false;
 
       return new Promise((resolve) => {
 
@@ -243,6 +326,13 @@ let ParrotDrone = function() {
             return _startNotifications()
           })
           .then(() => {
+            return new Promise(resolve => {
+              setTimeout(() => {
+                _handshake().then(resolve);
+              }, 100);
+            });
+          })
+          .then(() => {
             connected = true;
             console.log('Connected');
             resolve();
@@ -259,8 +349,12 @@ let ParrotDrone = function() {
       console.log('Take off...');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);
-        });
+          return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 2, 0, 1, 0]);
+        })
+        .then(() => {
+          _startPing();
+        })
+        .catch(_onBluetoothError);
 
     },
 
@@ -269,8 +363,9 @@ let ParrotDrone = function() {
       console.log('Flip...');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 4, 0, 0, 2, 0, 0, 0]);
-        });
+          return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 2, 4, 0, 0, 2, 0, 0, 0]);
+        })
+        .catch(_onBluetoothError);
 
     },
 
@@ -279,8 +374,12 @@ let ParrotDrone = function() {
       console.log('Land...');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
-        });
+          return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 2, 0, 3, 0]);
+        })
+        .then(() => {
+          clearInterval(ping);
+        })
+        .catch(_onBluetoothError);
 
     },
 
@@ -289,40 +388,60 @@ let ParrotDrone = function() {
       console.warn('Emergency cut off!');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
-        });
+          return _writeTo('fa00', 'fa0c', [0x02, ++steps.fa0c & 0xFF, 0x02, 0x00, 0x04, 0x00]);
+        })
+        .then(() => {
+          clearInterval(ping);
+        })
+        .catch(_onBluetoothError);
 
     },
 
     hover: function() {
-
-      console.log('Hover');
-
-
+      _hover();
     },
 
     moveForwards: function() {
 
       console.log('Move forwards');
-
+      speeds.yaw = 0;
+      speeds.pitch = 1;
+      speeds.roll = 0;
+      speeds.altitude = 0;
+      driveStepsRemaining = 5;
 
     },
 
     moveBackwards: function() {
 
       console.log('Move backwards');
+      speeds.yaw = 0;
+      speeds.pitch = -1;
+      speeds.roll = 0;
+      speeds.altitude = 0;
+      driveStepsRemaining = 5;
 
     },
 
     moveLeft: function() {
 
       console.log('Move left');
+      speeds.yaw = -1;
+      speeds.pitch = 0;
+      speeds.roll = 0;
+      speeds.altitude = 0;
+      driveStepsRemaining = 5;
 
     },
 
     moveRight: function() {
 
       console.log('Move right');
+      speeds.yaw = 1;
+      speeds.pitch = 0;
+      speeds.roll = 0;
+      speeds.altitude = 0;
+      driveStepsRemaining = 5;
 
     }
 

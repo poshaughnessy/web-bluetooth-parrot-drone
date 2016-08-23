@@ -9,6 +9,7 @@
       backwardButton = document.getElementById('backwardBtn'),
       leftButton = document.getElementById('leftBtn'),
       rightButton = document.getElementById('rightBtn'),
+      hoverButton = document.getElementById('hoverBtn'),
       flipButton = document.getElementById('flipBtn'),
       landButton = document.getElementById('landBtn'),
       emergencyButton = document.getElementById('emergencyBtn');
@@ -29,6 +30,7 @@
     backwardButton.addEventListener('click', drone.moveBackwards);
     leftButton.addEventListener('click', drone.moveLeft);
     rightButton.addEventListener('click', drone.moveRight);
+    hoverButton.addEventListener('click', drone.hover);
     flipButton.addEventListener('click', drone.flip);
     landButton.addEventListener('click', drone.land);
     emergencyButton.addEventListener('click', drone.emergencyCutOff);

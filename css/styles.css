@@ -10,6 +10,7 @@ h1 {
   font-style: italic;
   text-transform: uppercase;
   text-align: center;
+  font-size: 1.9em;
 }
 
 button {
@@ -26,7 +27,6 @@ button {
   border-radius: 4px;
   font-size: 1.2em;
   font-weight: bold;
-  font-style: italic;
   text-transform: uppercase;
 }
 
@@ -72,9 +72,12 @@ button.hover {
   margin: 8px 0;
 }
 
-a {
+p {
   margin-top: 10px;
-  display: block;
   text-align: center;
+  color: #fff;
+}
+
+a {
   color: #fff;
 }

@@ -48,7 +48,7 @@ self.addEventListener('fetch', event => {
       caches.open(CACHE_NAME)
         .then(cache => {
           cache.put(event.request, responseToCache);
-          console.log('Cached response', responseToCache);
+          console.log('Cached this response', responseToCache);
         });
 
       return response;
