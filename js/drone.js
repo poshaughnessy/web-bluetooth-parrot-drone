@@ -10,6 +10,9 @@
 
 'use strict';
 
+const DEFAULT_SPEED = 50;
+const DEFAULT_DRIVE_STEPS = 40;
+
 let ParrotDrone = function() {
 
   let connected = false,
@@ -310,6 +313,27 @@ let ParrotDrone = function() {
 
   }
 
+  function _setSpeed(property, speed, driveSteps) {
+
+    console.log(`Change ${property} to ${speed}`);
+
+    const props = ['yaw', 'pitch', 'roll', 'altitude'];
+
+    for (let i=0; i < props.length; i++) {
+
+      const prop = props[i];
+
+      if (property === prop) {
+        speeds[prop] = speed;
+      } else {
+        speeds[prop] = 0;
+      }
+
+      driveStepsRemaining = driveSteps;
+
+    }
+  }
+
   function _onBluetoothError(err) {
 
     console.error('Error!', err);
@@ -421,48 +445,20 @@ let ParrotDrone = function() {
       _hover();
     },
 
-    moveForwards: function() {
-
-      console.log('%c Move forwards', 'background: #ccc; color: #0000ff;');
-      speeds.yaw = 0;
-      speeds.pitch = 50;
-      speeds.roll = 0;
-      speeds.altitude = 0;
-      driveStepsRemaining = 50;
-
+    moveForwards: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
+      _setSpeed('pitch', absoluteSpeed, driveSteps);
     },
 
-    moveBackwards: function() {
-
-      console.log('%c Move backwards', 'background: #ccc; color: #0000ff;');
-      speeds.yaw = 0;
-      speeds.pitch = -50;
-      speeds.roll = 0;
-      speeds.altitude = 0;
-      driveStepsRemaining = 50;
-
+    moveBackwards: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
+      _setSpeed('pitch', -absoluteSpeed, driveSteps);
     },
 
-    moveLeft: function() {
-
-      console.log('%c Move left', 'background: #ccc; color: #0000ff;');
-      speeds.yaw = -50;
-      speeds.pitch = 0;
-      speeds.roll = 0;
-      speeds.altitude = 0;
-      driveStepsRemaining = 50;
-
+    moveLeft: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
+      _setSpeed('yaw', -absoluteSpeed, driveSteps);
     },
 
-    moveRight: function() {
-
-      console.log('%c Move right', 'background: #ccc; color: #ff0000;');
-      speeds.yaw = 50;
-      speeds.pitch = 0;
-      speeds.roll = 0;
-      speeds.altitude = 0;
-      driveStepsRemaining = 50;
-
+    moveRight: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
+      _setSpeed('yaw', absoluteSpeed, driveSteps);
     }
 
   };
