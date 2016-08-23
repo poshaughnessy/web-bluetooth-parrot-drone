@@ -5,6 +5,10 @@
     let drone = ParrotDrone(),
       connectButton = document.getElementById('connectBtn'),
       takeOffButton = document.getElementById('takeOffBtn'),
+      forwardButton = document.getElementById('forwardBtn'),
+      backwardButton = document.getElementById('backwardBtn'),
+      leftButton = document.getElementById('leftBtn'),
+      rightButton = document.getElementById('rightBtn'),
       flipButton = document.getElementById('flipBtn'),
       landButton = document.getElementById('landBtn'),
       emergencyButton = document.getElementById('emergencyBtn');
@@ -21,9 +25,15 @@
     });
 
     takeOffButton.addEventListener('click', drone.takeOff);
+    forwardButton.addEventListener('click', drone.moveForwards);
+    backwardButton.addEventListener('click', drone.moveBackwards);
+    leftButton.addEventListener('click', drone.moveLeft);
+    rightButton.addEventListener('click', drone.moveRight);
     flipButton.addEventListener('click', drone.flip);
     landButton.addEventListener('click', drone.land);
     emergencyButton.addEventListener('click', drone.emergencyCutOff);
+
+
   }
 
   function installServiceWorker() {

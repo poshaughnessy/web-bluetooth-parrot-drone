@@ -65,6 +65,13 @@ button.right {
   float: right;
 }
 
+button.hover {
+  width: 26%;
+  background: #38545b;
+  font-style: normal;
+  margin: 8px 0;
+}
+
 a {
   margin-top: 10px;
   display: block;

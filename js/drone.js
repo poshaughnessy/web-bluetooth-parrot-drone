@@ -224,13 +224,13 @@ let ParrotDrone = function() {
 
   return {
 
-    connect: function () {
+    connect: function() {
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
 
         if (connected) {
           console.log('Already connected');
-          return reject();
+          return resolve();
         }
 
         console.log('Connect');
@@ -254,7 +254,7 @@ let ParrotDrone = function() {
     },
 
 
-    takeOff: function () {
+    takeOff: function() {
 
       console.log('Take off...');
       return droneDevice.gatt.connect()
@@ -264,7 +264,7 @@ let ParrotDrone = function() {
 
     },
 
-    flip: function () {
+    flip: function() {
 
       console.log('Flip...');
       return droneDevice.gatt.connect()
@@ -274,7 +274,7 @@ let ParrotDrone = function() {
 
     },
 
-    land: function () {
+    land: function() {
 
       console.log('Land...');
       return droneDevice.gatt.connect()
@@ -284,13 +284,45 @@ let ParrotDrone = function() {
 
     },
 
-    emergencyCutOff: function () {
+    emergencyCutOff: function() {
 
       console.warn('Emergency cut off!');
       return droneDevice.gatt.connect()
         .then(() => {
           return _writeTo('fa00', 'fa0c', [0x02, steps.fa0c++ & 0xFF, 0x02, 0x00, 0x04, 0x00]);
         });
+
+    },
+
+    hover: function() {
+
+      console.log('Hover');
+
+
+    },
+
+    moveForwards: function() {
+
+      console.log('Move forwards');
+
+
+    },
+
+    moveBackwards: function() {
+
+      console.log('Move backwards');
+
+    },
+
+    moveLeft: function() {
+
+      console.log('Move left');
+
+    },
+
+    moveRight: function() {
+
+      console.log('Move right');
 
     }
 
