@@ -13,11 +13,14 @@ h1 {
 }
 
 button {
-  display: block;
-  width: 300px;
-  height: 50px;
-  margin: 20px auto;
-  background: #0b81b0;
+  box-sizing: border-box;
+  width: 40%;
+  width: -webkit-calc(50% - 18px);
+  width: calc(50% - 18px);
+  height: 55px;
+  margin: 8px;
+  padding: 5px 0;
+  background: #15619b;
   color: #fff;
   border: 0;
   border-radius: 4px;
@@ -25,6 +28,13 @@ button {
   font-weight: bold;
   font-style: italic;
   text-transform: uppercase;
+}
+
+button.emergency {
+  width: 90%;
+  width: -ms-calc(100% - 18px);
+  width: calc(100% - 18px);
+  background: #dd7052;
 }
 
 a {

@@ -1,7 +1,5 @@
 'use strict';
 
-importScripts('serviceworker-cache-polyfill.js');
-
 console.log('Service worker startup');
 
 const CACHE_NAME = 'webdrone-cache-v1';
@@ -17,8 +15,12 @@ self.addEventListener('install', event => {
               '/css/styles.css',
               '/js/drone.js',
               '/js/main.js',
-              '/offline.html',
-              '/'
+              '/images/app-icon-48.png',
+              '/images/app-icon-72.png',
+              '/images/app-icon-96.png',
+              '/images/app-icon-144.png',
+              '/images/app-icon-168.png',
+              '/images/app-icon-192.png'
             ]);
         }
       );
@@ -53,12 +55,8 @@ self.addEventListener('fetch', event => {
     })
     .catch(err => {
 
-      // Fetch failed. Maybe we're offline. Try the cache.
+      console.log('Fetch failed, maybe we are offline, try cache', err);
 
-      console.log('Fetch failed, try cache', err);
-
-      debugger;
-      
       event.respondWith(
         caches.match(event.request)
           .then(response => {

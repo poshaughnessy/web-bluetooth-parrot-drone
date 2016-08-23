@@ -37,6 +37,6 @@
   }
 
   setupUI();
-  //installServiceWorker();
+  installServiceWorker();
 
 })();
