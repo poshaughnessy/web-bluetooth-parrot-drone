@@ -6,7 +6,7 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
 
 ## Demo Video
 
-[https://youtu.be/gXu3G3cg52k](https://youtu.be/gXu3G3cg52k)
+[![Demo video](https://j.gifs.com/wp482w.gif)](https://youtu.be/gXu3G3cg52k)
  
 ## Setup
 
