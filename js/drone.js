@@ -10,9 +10,6 @@
 
 'use strict';
 
-// 'Travis_' for Airborne Cargo drone. Change to 'RS_' for Rolling Spider.
-const DRONE_BLUETOOTH_NAME_PREFIX = 'Travis_';
-
 let ParrotDrone = function() {
 
   let connected = false,
@@ -45,16 +42,19 @@ let ParrotDrone = function() {
 
               characteristic.addEventListener('characteristicvaluechanged', event => {
 
-                console.log('Notification from:', characteristicID, event);
+                const array = new Uint8Array(event.target.value);
 
-                const value = event.target.value;
+                let a = [];
+                for (let i = 0; i < array.byteLength; i++) {
+                  a.push('0x' + ('00' + array.getUint8(i).toString(16)).slice(-2));
+                }
+                console.log('Notification from ' + characteristicID + ': ' + a.join(' '));
 
                 if (characteristicID === 'fb0e') {
 
                   var eventList = ['fsLanded', 'fsTakingOff', 'fsHovering',
                     'fsUnknown', 'fsLanding', 'fsCutOff'];
 
-                  var array = new Uint8Array(value);
 
                   if (eventList[array[6]] === 'fsHovering') {
                     console.log('Hovering - ready to go');
@@ -68,6 +68,8 @@ let ParrotDrone = function() {
                     console.log('Not flying');
                   }
 
+                } else if (characteristicID === 'fb0f') {
+                  console.log('Battery Level: ' + array[array.length-1] + '%');
                 }
               });
 
@@ -87,17 +89,14 @@ let ParrotDrone = function() {
     console.log('Searching for drone...');
     return navigator.bluetooth.requestDevice({
         filters: [
-          {
-            namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
-          },
-          {
-            services: [
-              _getUUID('fa00'),
-              _getUUID('fb00'),
-              _getUUID('fd21'),
-              _getUUID('fd51')
-            ]
-          }
+          { namePrefix: 'RS_' },
+          { namePrefix: 'Travis_'}
+        ],
+        optionalServices: [
+          _getUUID('fa00'),
+          _getUUID('fb00'),
+          _getUUID('fd21'),
+          _getUUID('fd51')
         ]
       })
       .then((device) => {
@@ -240,7 +239,23 @@ let ParrotDrone = function() {
             return _connectGATT();
           })
           .then(() => {
-            return _startNotifications()
+            return _startNotifications();
+          })
+          .then(() => {
+            // Handshake #1...
+            return new Promise((resolve, reject) => {
+              setTimeout(function() {
+                resolve(_writeTo('fa00', 'fa0b', [4, steps.fa0b++, 0x00, 0x04, 0x01, 0x00, 0x32, 0x30, 0x31, 0x36, 0x2D, 0x31, 0x38, 0x2D, 0x30, 0x35, 0x00]));
+              }, 100);
+            });
+          })
+          .then(() => {
+            // Handshake #2...
+            return new Promise((resolve, reject) => {
+              setTimeout(function() {
+                resolve(_writeTo('fa00', 'fa0b', [4, steps.fa0b++, 0x00, 0x04, 0x02, 0x00, 0x54, 0x31, 0x33, 0x33, 0x34, 0x32, 0x31, 0x2B, 0x30, 0x32, 0x30, 0x30, 0x00]));
+              }, 100);
+            });
           })
           .then(() => {
             connected = true;
@@ -259,7 +274,12 @@ let ParrotDrone = function() {
       console.log('Take off...');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);
+          //return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 1, 0]);
+          steps.fa0b = steps.fa0b + 2; // Not sure why...
+          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 0, 2, 0, 0]);
+        })
+        .then(() => {
+          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 0, 4, 0, 0]);
         });
 
     },
@@ -279,7 +299,7 @@ let ParrotDrone = function() {
       console.log('Land...');
       return droneDevice.gatt.connect()
         .then(() => {
-          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 2, 0, 3, 0]);
+          return _writeTo('fa00', 'fa0b', [4, steps.fa0b++, 0, 4, 0, 0]);
         });
 
     },
