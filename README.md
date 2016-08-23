@@ -45,7 +45,13 @@ If that still fails, try switching the drone off and on again, wait for the gree
 
 If you spot any fixes / improvements that could be made, PRs are very welcome!
 
-
 ## Demo Video
 
 [https://youtu.be/-FO9thLaiug](https://youtu.be/-FO9thLaiug)
+
+## Thanks
+
+I am indebted to [voodootikigod's rolling spider] project for demonstrating how to communicate with the drone.
+
+Thanks also to [@beaufortfrancois](https://github.com/beaufortfrancois) for working with me to get the demo working 
+better!
