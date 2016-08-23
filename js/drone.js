@@ -78,7 +78,15 @@ let ParrotDrone = function() {
                   }
 
                 } else if (characteristicID === 'fb0f') {
-                  console.log('Battery Level: ' + array[array.length-1] + '%');
+
+                  const batteryLevel = array[array.length - 1];
+
+                  console.log(`Battery Level: ${batteryLevel}%`);
+
+                  if (batteryLevel < 10) {
+                    console.error('Battery level too low!');
+                  }
+
                 }
               });
 
@@ -285,6 +293,8 @@ let ParrotDrone = function() {
         if (driveStepsRemaining === 0) {
           console.log('Move complete, reset to hover state');
           _hover();
+        } else {
+          console.log('Drive steps remaining', driveStepsRemaining);
         }
 
       }
@@ -348,6 +358,10 @@ let ParrotDrone = function() {
       console.log('Take off...');
       return droneDevice.gatt.connect()
         .then(() => {
+          // "Flat trim" which you are meant to call before taking off
+          return _writeTo('fa00', 'fa0b', [2, ++steps.fa0b & 0xFF, 2, 0, 0, 0]);
+        })
+        .then(() => {
           return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 2, 0, 1, 0]);
         })
         .then(() => {
@@ -402,7 +416,7 @@ let ParrotDrone = function() {
 
     moveForwards: function() {
 
-      console.log('Move forwards');
+      console.log('%c Move forwards', 'background: #ccc; color: #0000ff;');
       speeds.yaw = 0;
       speeds.pitch = 50;
       speeds.roll = 0;
@@ -413,7 +427,7 @@ let ParrotDrone = function() {
 
     moveBackwards: function() {
 
-      console.log('Move backwards');
+      console.log('%c Move backwards', 'background: #ccc; color: #0000ff;');
       speeds.yaw = 0;
       speeds.pitch = -50;
       speeds.roll = 0;
@@ -424,7 +438,7 @@ let ParrotDrone = function() {
 
     moveLeft: function() {
 
-      console.log('Move left');
+      console.log('%c Move left', 'background: #ccc; color: #0000ff;');
       speeds.yaw = -50;
       speeds.pitch = 0;
       speeds.roll = 0;
@@ -435,7 +449,7 @@ let ParrotDrone = function() {
 
     moveRight: function() {
 
-      console.log('Move right');
+      console.log('%c Move right', 'background: #ccc; color: #ff0000;');
       speeds.yaw = 50;
       speeds.pitch = 0;
       speeds.roll = 0;
