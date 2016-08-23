@@ -37,8 +37,36 @@ button.emergency {
   background: #dd7052;
 }
 
+button.up,
+button.left,
+button.right,
+button.down {
+  background: #38545b;
+  display: block;
+  width: 32%;
+  font-style: normal;
+  font-size: 2em;
+}
+
+button.up {
+  margin: 20px auto 0 auto;
+}
+
+button.down {
+  margin: 0 auto 20px auto;
+  clear: both;
+}
+
+button.left {
+  float: left;
+}
+
+button.right {
+  float: right;
+}
+
 a {
-  margin-top: 30px;
+  margin-top: 10px;
   display: block;
   text-align: center;
   color: #fff;
