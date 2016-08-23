@@ -445,20 +445,20 @@ let ParrotDrone = function() {
       _hover();
     },
 
-    moveForwards: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
-      _setSpeed('pitch', absoluteSpeed, driveSteps);
+    moveForwards: function() {
+      _setSpeed('pitch', DEFAULT_SPEED, DEFAULT_DRIVE_STEPS);
     },
 
-    moveBackwards: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
-      _setSpeed('pitch', -absoluteSpeed, driveSteps);
+    moveBackwards: function() {
+      _setSpeed('pitch', -DEFAULT_SPEED, DEFAULT_DRIVE_STEPS);
     },
 
-    moveLeft: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
-      _setSpeed('yaw', -absoluteSpeed, driveSteps);
+    moveLeft: function() {
+      _setSpeed('yaw', -DEFAULT_SPEED, DEFAULT_DRIVE_STEPS);
     },
 
-    moveRight: function(absoluteSpeed = DEFAULT_SPEED, driveSteps = DEFAULT_DRIVE_STEPS) {
-      _setSpeed('yaw', absoluteSpeed, driveSteps);
+    moveRight: function() {
+      _setSpeed('yaw', DEFAULT_SPEED, DEFAULT_DRIVE_STEPS);
     }
 
   };
