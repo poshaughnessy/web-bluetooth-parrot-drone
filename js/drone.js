@@ -267,7 +267,7 @@ let ParrotDrone = function() {
 
     ping = setInterval(() => {
 
-      console.log('Ping');
+      console.log('Ping...');
 
       _writeTo('fa00', 'fa0a',
         [
@@ -282,6 +282,13 @@ let ParrotDrone = function() {
           speeds.pitch,
           speeds.yaw,
           speeds.altitude,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ])
         .catch(_onBluetoothError);
