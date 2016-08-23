@@ -15,8 +15,8 @@ h1 {
 button {
   box-sizing: border-box;
   width: 40%;
-  width: -webkit-calc(50% - 18px);
-  width: calc(50% - 18px);
+  width: -webkit-calc(50% - 19px);
+  width: calc(50% - 19px);
   height: 55px;
   margin: 8px;
   padding: 5px 0;
@@ -42,5 +42,4 @@ a {
   display: block;
   text-align: center;
   color: #fff;
-  text-decoration: none;
 }
