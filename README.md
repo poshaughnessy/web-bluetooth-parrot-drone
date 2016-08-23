@@ -8,6 +8,8 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
 
 [![Demo video](https://j.gifs.com/wp482w.gif)](https://youtu.be/gXu3G3cg52k)
  
+[(https://youtu.be/gXu3G3cg52k)](https://youtu.be/gXu3G3cg52k) 
+ 
 ## Setup
 
 Currently requires Chrome (watch this space for Samsung Internet support ;-)).
