@@ -10,9 +10,6 @@
 
 'use strict';
 
-// 'Travis_' for Airborne Cargo drone. Change to 'RS_' for Rolling Spider.
-const DRONE_BLUETOOTH_NAME_PREFIX = 'Travis_';
-
 let ParrotDrone = function() {
 
   let connected = false,
@@ -53,22 +50,26 @@ let ParrotDrone = function() {
 
               characteristic.addEventListener('characteristicvaluechanged', event => {
 
-                console.log('Notification from:', characteristicID, event);
+                const array = new Uint8Array(event.target.value.buffer);
 
-                const value = event.target.value;
+                let a = [];
+                for (let i = 0; i < array.byteLength; i++) {
+                  a.push('0x' + ('00' + array[i].toString(16)).slice(-2));
+                }
+
+                console.log('Notification from ' + characteristicID + ': ' + a.join(' '));
 
                 if (characteristicID === 'fb0e') {
 
                   var eventList = ['fsLanded', 'fsTakingOff', 'fsHovering',
                     'fsUnknown', 'fsLanding', 'fsCutOff'];
 
-                  var array = new Uint8Array(value);
-
                   if (eventList[array[6]] === 'fsHovering') {
                     console.log('Hovering - ready to go');
                   } else {
                     console.log('Not hovering... Not ready', array[6]);
                   }
+
                   if ([1, 2, 3, 4].indexOf(array[6]) >= 0) {
                     console.log('Flying');
                   }
@@ -76,6 +77,8 @@ let ParrotDrone = function() {
                     console.log('Not flying');
                   }
 
+                } else if (characteristicID === 'fb0f') {
+                  console.log('Battery Level: ' + array[array.length-1] + '%');
                 }
               });
 
@@ -95,17 +98,14 @@ let ParrotDrone = function() {
     console.log('Searching for drone...');
     return navigator.bluetooth.requestDevice({
         filters: [
-          {
-            namePrefix: DRONE_BLUETOOTH_NAME_PREFIX
-          },
-          {
-            services: [
-              _getUUID('fa00'),
-              _getUUID('fb00'),
-              _getUUID('fd21'),
-              _getUUID('fd51')
-            ]
-          }
+          { namePrefix: 'RS_' },
+          { namePrefix: 'Travis_'}
+        ],
+        optionalServices: [
+          _getUUID('fa00'),
+          _getUUID('fb00'),
+          _getUUID('fd21'),
+          _getUUID('fd51')
         ]
       })
       .then((device) => {
@@ -276,19 +276,18 @@ let ParrotDrone = function() {
           speeds.altitude,
           0
         ])
-        .then(() => {
-          console.log('Ping command written successfully');
-        })
         .catch(_onBluetoothError);
 
       if (driveStepsRemaining > 0) {
+
         driveStepsRemaining--;
-      } else {
-        console.log('Move complete, reset to hover state');
-        _hover();
+
+        if (driveStepsRemaining === 0) {
+          console.log('Move complete, reset to hover state');
+          _hover();
+        }
+
       }
-
-
 
     }, 50);
 
@@ -334,7 +333,7 @@ let ParrotDrone = function() {
           })
           .then(() => {
             connected = true;
-            console.log('Connected');
+            console.log('Completed handshake');
             resolve();
           });
 
@@ -405,10 +404,10 @@ let ParrotDrone = function() {
 
       console.log('Move forwards');
       speeds.yaw = 0;
-      speeds.pitch = 1;
+      speeds.pitch = 50;
       speeds.roll = 0;
       speeds.altitude = 0;
-      driveStepsRemaining = 5;
+      driveStepsRemaining = 50;
 
     },
 
@@ -416,32 +415,32 @@ let ParrotDrone = function() {
 
       console.log('Move backwards');
       speeds.yaw = 0;
-      speeds.pitch = -1;
+      speeds.pitch = -50;
       speeds.roll = 0;
       speeds.altitude = 0;
-      driveStepsRemaining = 5;
+      driveStepsRemaining = 50;
 
     },
 
     moveLeft: function() {
 
       console.log('Move left');
-      speeds.yaw = -1;
+      speeds.yaw = -50;
       speeds.pitch = 0;
       speeds.roll = 0;
       speeds.altitude = 0;
-      driveStepsRemaining = 5;
+      driveStepsRemaining = 50;
 
     },
 
     moveRight: function() {
 
       console.log('Move right');
-      speeds.yaw = 1;
+      speeds.yaw = 50;
       speeds.pitch = 0;
       speeds.roll = 0;
       speeds.altitude = 0;
-      driveStepsRemaining = 5;
+      driveStepsRemaining = 50;
 
     }
 
