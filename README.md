@@ -57,6 +57,11 @@ If you *still* have trouble, you can have the remote debugging tools open in Chr
 may help you to see where it's going wrong, at least. If you spot any fixes / improvements that could be made, PRs are 
 welcome!
 
+## Parrot Drone Docs
+
+If you are interested to learn more about the API to communicate with the drone, you can find 
+[links to docs here](https://github.com/voodootikigod/node-rolling-spider/issues/78).
+
 ## Thanks
 
 I am indebted to [voodootikigod's rolling spider](https://github.com/voodootikigod/node-rolling-spider) project for 
