@@ -48,6 +48,10 @@ button.down {
   font-size: 2em;
 }
 
+.direction-pad > div {
+  text-align: center;
+}
+
 button.up {
   margin: 20px auto 0 auto;
 }
