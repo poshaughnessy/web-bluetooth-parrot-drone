@@ -345,10 +345,6 @@ let ParrotDrone = function() {
 
     connect: function() {
 
-      // TODO allow tapping again to disconnect
-      // clearInterval(ping);
-      // connected = false;
-
       return new Promise((resolve) => {
 
         if (connected) {
@@ -393,6 +389,7 @@ let ParrotDrone = function() {
           return _writeTo('fa00', 'fa0b', [2, ++steps.fa0b & 0xFF, 2, 0, 0, 0]);
         })
         .then(() => {
+          // Actual command to take off
           return _writeTo('fa00', 'fa0b', [4, ++steps.fa0b, 2, 0, 1, 0]);
         })
         .then(() => {
