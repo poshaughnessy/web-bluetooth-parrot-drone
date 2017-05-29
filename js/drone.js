@@ -110,6 +110,7 @@ let ParrotDrone = function() {
     return navigator.bluetooth.requestDevice({
         filters: [
           { namePrefix: 'RS_' },
+          { namePrefix: 'Mars_' },
           { namePrefix: 'Travis_'}
         ],
         optionalServices: [
