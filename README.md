@@ -12,7 +12,7 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
  
 ## Setup
 
-Currently requires Chrome (watch this space for Samsung Internet support ;-)).
+Currently requires Chrome or Opera (watch this space for Samsung Internet support ;-)).
 
 Run the web app up on your dev machine with any simple web server that can serve static files, e.g.: `python -m SimpleHTTPServer 8080`
 
@@ -21,16 +21,16 @@ Now you should be able to visit `localhost:8080` on your Android device, to see 
 
 NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, if not serving from `localhost`. 
 
-If you wish to host a version somewhere, it will need to be over HTTPS and you will need the 
+If you wish to host a version somewhere, it will need to be over HTTPS. (Previously you needed the 
 [Web Bluetooth flag enabled in the browser](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web#before-we-start) 
-or to register your site for an [origin trial](https://github.com/jpchase/OriginTrials).  
+or to register your site for an [origin trial](https://github.com/jpchase/OriginTrials) but) it is now 
+[enabled by default, since Chrome 56 and Opera 43](https://www.chromestatus.com/feature/5264933985976320).
 
 ## Safety warning
 
-This code isn't bulletproof and the Web Bluetooth API is still pretty new. Please observe the usual caution with drone 
-flying as well as making sure you have a backup method of disabling the drone in the event of a bug! (A technique I have 
-used is to raise something like a strong piece of card up towards the drone from underneath. When it detects it has been 
-touched, the drone should shut down automatically).
+There may be bugs! Please observe the usual caution with drone flying as well as making sure you have a backup method 
+of disabling the drone in the event of a bug! (A technique I have used is to raise something like a strong piece of 
+card up towards the drone from underneath. When it detects it has been touched, the drone should shut down automatically).
 
 ## Then...
 
