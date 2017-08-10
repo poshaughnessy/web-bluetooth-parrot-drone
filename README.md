@@ -12,7 +12,7 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
  
 ## Setup
 
-Currently requires Chrome or Opera or Samsung Internet Beta with Web Bluetooth switched on in `internet://flags`.
+Currently requires [Chrome or Opera](http://caniuse.com/#feat=web-bluetooth), or Samsung Internet Beta with Web Bluetooth switched on in `internet://flags`.
 
 Run the web app up on your dev machine with any simple web server that can serve static files, e.g.: `python -m SimpleHTTPServer 8080`
 
@@ -21,10 +21,7 @@ Now you should be able to visit `localhost:8080` on your Android device, to see 
 
 NB. You can't just point to an IP address because Web Bluetooth requires HTTPS, if not serving from `localhost`. 
 
-If you wish to host a version somewhere, it will need to be over HTTPS. (Previously you needed the 
-[Web Bluetooth flag enabled in the browser](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web#before-we-start) 
-or to register your site for an [origin trial](https://github.com/jpchase/OriginTrials) but) it is now 
-[enabled by default, since Chrome 56 and Opera 43](https://www.chromestatus.com/feature/5264933985976320).
+If you wish to host a version somewhere, it will need to be over HTTPS.
 
 ## Safety warning
 
