@@ -12,7 +12,7 @@ Controlling a Parrot Mini Drone from Chrome for Android, using [Web Bluetooth](h
  
 ## Setup
 
-Currently requires Chrome or Opera (watch this space for Samsung Internet support ;-)).
+Currently requires Chrome or Opera or Samsung Internet Beta with Web Bluetooth switched on in `internet://flags`.
 
 Run the web app up on your dev machine with any simple web server that can serve static files, e.g.: `python -m SimpleHTTPServer 8080`
 
