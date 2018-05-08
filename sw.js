@@ -12,6 +12,8 @@ self.addEventListener('install', event => {
         console.log('Caching required assets on installation');
         cache.addAll(
             [
+              '/',
+              '/index.html',
               '/css/styles.css',
               '/js/drone.v1.2.js',
               '/js/main.v1.2.js'
