@@ -2,25 +2,19 @@
 
 console.log('Service worker startup');
 
-const CACHE_NAME = 'webdrone-cache-v1';
+const CACHE_NAME = 'webdrone-cache-1_2';
 
 self.addEventListener('install', event => {
 
   function onInstall () {
     return caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Caching pre-defined assets on installation');
+        console.log('Caching required assets on installation');
         cache.addAll(
             [
               '/css/styles.css',
-              '/js/drone.js',
-              '/js/main.js',
-              '/images/app-icon-48.png',
-              '/images/app-icon-72.png',
-              '/images/app-icon-96.png',
-              '/images/app-icon-144.png',
-              '/images/app-icon-168.png',
-              '/images/app-icon-192.png'
+              '/js/drone.v1.2.js',
+              '/js/main.v1.2.js'
             ]);
         }
       );
@@ -31,11 +25,8 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
 
-  // Clone so we can consume it more than once
-  let fetchRequest = event.request.clone();
-
   // If we can fetch latest version, then do so
-  return fetch(fetchRequest)
+  let responsePromise = fetch(event.request)
     .then(response => {
 
       if (!response || response.status >= 300 || response.type !== 'basic') {
@@ -57,22 +48,22 @@ self.addEventListener('fetch', event => {
 
       console.log('Fetch failed, maybe we are offline, try cache', err);
 
-      event.respondWith(
-        caches.match(event.request)
-          .then(response => {
-              if (response) {
-                console.log('Cache hit', event.request);
-                return response;
-              } else {
-                // Offline 404
-                console.log('Offline 404');
-                return caches.match('offline.html');
-              }
+      return caches.match(event.request)
+        .then(response => {
+            if (response) {
+              console.log('Cache hit', event.request);
+              return response;
+            } else {
+              // Offline 404
+              console.log('Offline 404');
+              return caches.match('offline.html');
             }
-          )
-      );
+          }
+        );
 
     });
+
+  event.respondWith(responsePromise);
 
 });
 
