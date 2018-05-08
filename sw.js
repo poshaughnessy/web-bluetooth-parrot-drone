@@ -54,9 +54,7 @@ self.addEventListener('fetch', event => {
               console.log('Cache hit', event.request);
               return response;
             } else {
-              // Offline 404
-              console.log('Offline 404');
-              return caches.match('offline.html');
+              console.warn('Offline cache miss');
             }
           }
         );
