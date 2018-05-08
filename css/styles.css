@@ -28,6 +28,7 @@ button {
   font-size: 1.2em;
   font-weight: bold;
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 button.emergency {
@@ -50,6 +51,14 @@ button.down {
 
 .direction-pad > div {
   text-align: center;
+}
+
+button.connected {
+  background: #dd7052;
+}
+
+button.pending {
+  background: #ddb752;
 }
 
 button.up {

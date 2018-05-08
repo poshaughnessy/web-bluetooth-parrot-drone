@@ -15,8 +15,7 @@ const DEFAULT_DRIVE_STEPS = 40;
 
 let ParrotDrone = function() {
 
-  let connected = false,
-    droneDevice = null,
+  let droneDevice = null,
     gattServer = null,
     // Used to store the 'counter' that's sent to each characteristic
     steps = {
@@ -33,7 +32,8 @@ let ParrotDrone = function() {
     ping = null,
     driveStepsRemaining = 0,
     services = {},
-    characteristics = {};
+    characteristics = {},
+    onDisconnectCallback = null;
 
   function _getUUID(uniqueSegment) {
     return '9a66' + uniqueSegment + '-0800-9191-11e4-012d1540cb8e';
@@ -130,11 +130,33 @@ let ParrotDrone = function() {
 
     console.log('Connect GATT');
 
+    droneDevice.addEventListener('gattserverdisconnected', _handleDisconnect);
+
     return droneDevice.gatt.connect()
       .then(server => {
         console.log('GATT server', server);
         gattServer = server;
       });
+
+  }
+
+  function _reset() {
+    ping = null;
+    driveStepsRemaining = 0;
+    services = {};
+    characteristics = {};
+    onDisconnectCallback = null;
+  }
+
+  function _handleDisconnect() {
+
+    if (onDisconnectCallback && typeof onDisconnectCallback === 'function') {
+      onDisconnectCallback();
+    }
+
+    _reset();
+
+    droneDevice.removeEventListener('gattserverdisconnected', _handleDisconnect);
 
   }
 
@@ -344,14 +366,11 @@ let ParrotDrone = function() {
 
   return {
 
-    connect: function() {
+    connect: function(disconnectCallback) {
+
+      onDisconnectCallback = disconnectCallback;
 
       return new Promise((resolve) => {
-
-        if (connected) {
-          console.log('Already connected');
-          return resolve();
-        }
 
         console.log('Connect');
 
@@ -370,7 +389,6 @@ let ParrotDrone = function() {
             });
           })
           .then(() => {
-            connected = true;
             console.log('Completed handshake');
             resolve();
           });
@@ -380,6 +398,12 @@ let ParrotDrone = function() {
 
     },
 
+    disconnect: function() {
+
+      console.log('Disconnect');
+      droneDevice.gatt.disconnect();
+
+    },
 
     takeOff: function() {
 
