@@ -116,7 +116,6 @@
   }
 
   setupUI();
-  // TODO put back...
   installServiceWorker();
 
 })();
