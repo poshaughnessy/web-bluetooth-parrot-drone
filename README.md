@@ -12,7 +12,7 @@ Controlling a Parrot Mini Drone from a web browser, using [Web Bluetooth](https:
  
 ## Setup
 
-Currently [requires Chrome or Opera](http://caniuse.com/#feat=web-bluetooth), or Samsung Internet Beta with Web Bluetooth switched on in `internet://flags`.
+Web Bluetooth currently [requires Chrome or Samsung Internet or Opera](http://caniuse.com/#feat=web-bluetooth).
 
 Run the web app up on your dev machine with any simple web server that can serve static files, e.g.: `python -m SimpleHTTPServer 8080`
 
