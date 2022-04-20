@@ -112,6 +112,7 @@ let ParrotDrone = function() {
           { namePrefix: 'RS_' },
           { namePrefix: 'Mars_' },
           { namePrefix: 'Mambo_' },
+          { namePrefix: 'Swing_' },
           { namePrefix: 'Travis_'}
         ],
         optionalServices: [
